@@ -1,0 +1,91 @@
+#include <iostream>
+#include <string>
+
+#include <sdsl/rmq_support.hpp> // include header for range minimum queries
+#include <sdsl/bit_vectors.hpp> // include header for bit vectors
+
+using namespace sdsl;
+using namespace std;
+
+// Check windows
+#if _WIN32 || _WIN64
+   #if _WIN64
+     #define ENV64BIT
+  #else
+    #define ENV32BIT
+  #endif
+#endif
+
+// Check GCC
+#if __GNUC__
+  #if __x86_64__ || __ppc64__
+    #define ENV64BIT
+  #else
+    #define ENV32BIT
+  #endif
+#endif
+
+#ifdef ENV64BIT
+#include <divsufsort64.h> // include header for suffix sort
+#endif
+
+#ifdef ENV32BIT
+#include <divsufsort.h> // include header for suffix sort
+#endif
+
+int main() {
+
+	#if defined(ENV64BIT)
+	    if (sizeof(void*) != 8)
+	    {
+	        wprintf(L"ENV64BIT: Error: pointer should be 8 bytes. Exiting.");
+	        exit(0);
+	    }
+		    wprintf(L"Diagnostics: we are running in 64-bit mode.\n");
+	#elif defined(ENV32BIT)
+	    if (sizeof(void*) != 4)
+	    {
+	        wprintf(L"ENV32BIT: Error: pointer should be 4 bytes. Exiting.");
+	        exit(0);
+	    }
+	    wprintf(L"Diagnostics: we are running in 32-bit mode.\n");
+	#else
+	    #error "Must define either ENV32BIT or ENV64BIT"
+	#endif
+
+	long int* SA;
+	long int* LCP;
+	long int* invSA;
+
+	long int n = 5;
+	unsigned char * seq = ( unsigned char* ) malloc( ( n ) * sizeof( unsigned char ) );
+	seq[0] = 'c';
+	seq[1] = 'a';
+	seq[2] = 't';
+	seq[3] = 'c';
+	seq[4] = 'a';
+	
+	SA = ( long int* ) malloc( ( n ) * sizeof( long int ) );
+
+    #if defined(ENV64BIT)
+    	if( divsufsort64( seq, SA,  n ) != 0 )
+        {
+                fprintf(stderr, " Error: SA computation failed.\n" );
+                exit( EXIT_FAILURE );
+        }
+        cout << "64" << endl;
+	#elif defined (ENV32BIT)
+	    if( divsufsort( seq, SA,  n ) != 0 )
+        {
+                fprintf(stderr, " Error: SA computation failed.\n" );
+                exit( EXIT_FAILURE );
+        }
+        cout << "32" << endl;
+	#else
+	    #error "Must define either ENV32BIT or ENV64BIT"
+	#endif
+
+	cout << "HELLO!" << n << endl;
+
+	return 0;
+} 
