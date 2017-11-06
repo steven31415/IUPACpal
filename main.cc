@@ -232,18 +232,41 @@ unsigned int LCE(INT i, INT j, INT n, INT * invSA, INT * LCP, rmq_succinct_sct<>
 // Only starts counting mismatches that occur after initial gap, however earlier mismatches are still stored
 // Should only be used after MatchMatrix has been instantiated with necessary data
 void realLCE_mismatches(unsigned char* text, INT i, INT j, INT n, INT * invSA, INT * LCP, rmq_succinct_sct<> rmq, int mismatches, int initial_gap, list<double>* mismatch_locs) {
+    cout << "n: " << n << endl;
+	cout << "inside realLCE_mismatches" << endl;
     if ( i == j ) {
+    	cout << "i == j" << endl;
         mismatch_locs->push_back( n - i );
     }
     else {
+    	cout << "i != j" << endl;
         int real_lce = 0;
 
         while (mismatches >= 0) {
-            real_lce = real_lce + LCE(i + real_lce, j + real_lce, n, invSA, LCP, rmq);
+        	cout << "loop: " << mismatches << endl;
 
-            if ( i + real_lce >= (n / 2) or j + real_lce >= n) {
+			cout << "before LCE" << endl;
+        	cout << "real_lce: " << real_lce << endl;
+        	cout << "i " << i << endl;
+        	cout << "j " << j << endl;
+
+            real_lce = real_lce + LCE(i + real_lce, j + real_lce, n, invSA, LCP, rmq);
+            cout << "after LCE" << endl;
+            cout << "real_lce: " << real_lce << endl;
+        	cout << "i " << i << endl;
+        	cout << "j " << j << endl;
+
+        	cout << endl << endl << endl;
+
+            if ( i + real_lce >= (n / 2) or j + real_lce >= n ) {
                 break;
             }
+
+        	/*
+            if (text[i + real_lce] == '$' or text[j + real_lce] == '#') {
+                break;
+            }
+            */
 
             char s1 = text[i + real_lce];
             char s2 = text[j + real_lce];
@@ -263,6 +286,8 @@ void realLCE_mismatches(unsigned char* text, INT i, INT j, INT n, INT * invSA, I
 void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, int S_n, int n, INT * invSA, INT * LCP, rmq_succinct_sct<> rmq, int mismatches, int max_gap) {
     for (double c = 0; c <= (n - 1); c += 0.5 ) {
         int i, j;
+
+        cout << "centre: " << c << endl;
 
         // Determine if centre corresponds to odd or even palindrome
         bool isOdd = (trunc(c) == c);
@@ -290,11 +315,12 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
         }
 
         list<double> mismatch_locs;
+        cout << "calling realLCE_mismatches " << "i: " << i << " j: " << j << endl;
         realLCE_mismatches(S, i, j, S_n, invSA, LCP, rmq, mismatches, initial_gap, &mismatch_locs);
         mismatch_locs.push_front(-1.0);
 
         // Optional printing of mismatch locations relative to centre
-        if (false) {
+        if (true) {
             cout << "[ ";
             for (list<double>::iterator it = mismatch_locs.begin(); it != mismatch_locs.end(); ++it){
                 cout << *it << " ";
@@ -337,8 +363,7 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
                 }
             }
 
-             // MAKE THIS WORK IN A MORE EFFICIENT WAY
-            /*
+             // MAKE THIS WORK IN A MORE EFFICIENT WAY (IGNORES MISMATCHES ON RIGHT, BUT THEN ADDS GAP (FIX THAT))
             if (*it == *next(it) - 1.0) {
                 list<double>::iterator temp_it = it;
 
@@ -348,7 +373,6 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
 
                 start_mismatch = *temp_it;
             }
-            */
 
             if (isOdd) {
                 left = int(c - end_mismatch);
@@ -639,7 +663,7 @@ int main() {
         rmq_succinct_sct<> rmq(&v);
 
         // Optional printing of data structures
-        if (false) {
+        if (true) {
             cout << endl << endl;
             print_array("  seq", seq, n);
             print_array("    S", S, S_n, true);
@@ -676,43 +700,65 @@ int main() {
         file << endl << endl << endl;
         file << "Palindromes:" << endl;
 
-        for (set<tuple<int, int, int>>::iterator it = palindromes.begin(); it != palindromes.end(); it++) {
-            int left = get<0>(*it);
-            int right = get<1>(*it);
-            int gap = get<2>(*it);
+        if (!palindromes.empty()) {
+	        int prev_left = get<0>(*palindromes.begin());
 
-            int outer_left = left + 1;
-            int outer_right = right + 1;
-            int inner_left = (outer_left + outer_right - 1 - gap) / 2;
-            int inner_right = (outer_right + outer_left + 1 + gap) / 2;
+	        set<tuple<int, int, int>>::iterator it_left_to_right = palindromes.begin();
+	        set<tuple<int, int, int>>::iterator it;
 
-            string pad = "         ";
-            int pad_length = pad.size();
+	        while (it_left_to_right != palindromes.end()) {
 
-            file << outer_left;
-            for (int i = 0; i < pad_length - getDigitCount(outer_left); ++i) { file << " "; }
-            for (int i = outer_left; i <= inner_left; ++i) { file << seq[i - 1]; }
-            for (int i = 0; i < pad_length - getDigitCount(inner_left); ++i) { file << " "; }
-            file << inner_left;
+	        	int left = get<0>(*it_left_to_right);
 
-            file << endl;
+	            if (prev_left != left) {
+	            	it = prev(it_left_to_right);
+	            	while (it != prev(palindromes.begin()) and get<0>(*it) == prev_left) {
+	            		
+	            		int left = get<0>(*it);
+			            int right = get<1>(*it);
+			            int gap = get<2>(*it);
 
-            file << pad;
-            for (int i = 0; i < (inner_left - outer_left + 1); ++i) {
-                file << ( (MatchMatrix::match(seq[ outer_left - 1 + i ], complement[ seq[ outer_right - 1 - i ] ])) ? "|" : " " );
-            }
-            file << pad;
-            
-            file << endl;
+			            int outer_left = left + 1;
+			            int outer_right = right + 1;
+			            int inner_left = (outer_left + outer_right - 1 - gap) / 2;
+			            int inner_right = (outer_right + outer_left + 1 + gap) / 2;
 
-            file << outer_right;
-            for (int i = 0; i < pad_length - getDigitCount(outer_right); ++i) { file << " "; }
-            for (int i = outer_right; i >= inner_right; --i) { file << seq[i - 1]; }
-            for (int i = 0; i < pad_length - getDigitCount(inner_right); ++i) { file << " "; }
-            file << inner_right;
+			            string pad = "         ";
+			            int pad_length = pad.size();
 
-            file << endl << endl;
-        }
+			            file << outer_left;
+			            for (int i = 0; i < pad_length - getDigitCount(outer_left); ++i) { file << " "; }
+			            for (int i = outer_left; i <= inner_left; ++i) { file << seq[i - 1]; }
+			            for (int i = 0; i < pad_length - getDigitCount(inner_left); ++i) { file << " "; }
+			            file << inner_left;
+
+			            file << endl;
+
+			            file << pad;
+			            for (int i = 0; i < (inner_left - outer_left + 1); ++i) {
+			                file << ( (MatchMatrix::match(seq[ outer_left - 1 + i ], complement[ seq[ outer_right - 1 - i ] ])) ? "|" : " " );
+			            }
+			            file << pad;
+			            
+			            file << endl;
+
+			            file << outer_right;
+			            for (int i = 0; i < pad_length - getDigitCount(outer_right); ++i) { file << " "; }
+			            for (int i = outer_right; i >= inner_right; --i) { file << seq[i - 1]; }
+			            for (int i = 0; i < pad_length - getDigitCount(inner_right); ++i) { file << " "; }
+			            file << inner_right;
+
+			            file << endl << endl;
+
+
+	            		it--;
+	            	}
+	            }
+
+	            prev_left = left;
+	            it_left_to_right++;
+	        }
+	    }
 
         file << endl << endl << endl;
 
