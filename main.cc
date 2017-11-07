@@ -232,31 +232,14 @@ unsigned int LCE(INT i, INT j, INT n, INT * invSA, INT * LCP, rmq_succinct_sct<>
 // Only starts counting mismatches that occur after initial gap, however earlier mismatches are still stored
 // Should only be used after MatchMatrix has been instantiated with necessary data
 void realLCE_mismatches(unsigned char* text, INT i, INT j, INT n, INT * invSA, INT * LCP, rmq_succinct_sct<> rmq, int mismatches, int initial_gap, list<double>* mismatch_locs) {
-    cout << "n: " << n << endl;
-	cout << "inside realLCE_mismatches" << endl;
     if ( i == j ) {
-    	cout << "i == j" << endl;
         mismatch_locs->push_back( n - i );
     }
     else {
-    	cout << "i != j" << endl;
         int real_lce = 0;
 
         while (mismatches >= 0) {
-        	cout << "loop: " << mismatches << endl;
-
-			cout << "before LCE" << endl;
-        	cout << "real_lce: " << real_lce << endl;
-        	cout << "i " << i << endl;
-        	cout << "j " << j << endl;
-
             real_lce = real_lce + LCE(i + real_lce, j + real_lce, n, invSA, LCP, rmq);
-            cout << "after LCE" << endl;
-            cout << "real_lce: " << real_lce << endl;
-        	cout << "i " << i << endl;
-        	cout << "j " << j << endl;
-
-        	cout << endl << endl << endl;
 
             if ( i + real_lce >= (n / 2) or j + real_lce >= n ) {
                 break;
@@ -287,8 +270,6 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
     for (double c = 0; c <= (n - 1); c += 0.5 ) {
         int i, j;
 
-        cout << "centre: " << c << endl;
-
         // Determine if centre corresponds to odd or even palindrome
         bool isOdd = (trunc(c) == c);
 
@@ -315,12 +296,28 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
         }
 
         list<double> mismatch_locs;
-        cout << "calling realLCE_mismatches " << "i: " << i << " j: " << j << endl;
         realLCE_mismatches(S, i, j, S_n, invSA, LCP, rmq, mismatches, initial_gap, &mismatch_locs);
         mismatch_locs.push_front(-1.0);
 
+        list<pair<double, int>> valid_start_locs; // (mismatch_loc, mismatch_count)
+        list<pair<double, int>> valid_end_locs; // (mismatch_loc, mismatch_count)
+
+        int mismatch_index = 0;
+        for (list<double>::iterator it = mismatch_locs.begin(); it != mismatch_locs.end(); ++it){
+            if (next(it) != mismatch_locs.end() and *next(it) != *it + 1.0) {
+                valid_start_locs.push_back(pair<double, int> (*it, mismatch_index));
+            }
+
+            if (it != mismatch_locs.begin() and *prev(it) != *it - 1.0) {
+                valid_end_locs.push_back(pair<double, int> (*it, mismatch_index));
+            }
+
+            mismatch_index++;
+        }
+
         // Optional printing of mismatch locations relative to centre
         if (true) {
+            cout << "c=" << c << "\t";
             cout << "[ ";
             for (list<double>::iterator it = mismatch_locs.begin(); it != mismatch_locs.end(); ++it){
                 cout << *it << " ";
@@ -328,6 +325,52 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
             cout << "]" << endl;
         }
 
+        // Optional printing of valid start and end locations
+        if (true) {
+            cout << "start" << "\t";
+            cout << "[ ";
+            for (list<pair<double, int>>::iterator it = valid_start_locs.begin(); it != valid_start_locs.end(); ++it){
+                cout << "(" << it->first << ", " << it->second << ") ";
+            }
+            cout << "]" << endl;
+
+            cout << "end" << "\t";
+            cout << "[ ";
+            for (list<pair<double, int>>::iterator it = valid_end_locs.begin(); it != valid_end_locs.end(); ++it){
+                cout << "(" << it->first << ", " << it->second << ") ";
+            }
+            cout << "]" << endl;
+
+            cout << endl;
+        }
+
+        if (c == 24.5) { //temporaily only do for 24.5 (check  this code works in general)
+            if ( !valid_start_locs.empty() and !valid_end_locs.empty() ) {
+                int mismatch_diff;
+                list<pair<double, int>>::iterator start_it = valid_start_locs.begin();
+                list<pair<double, int>>::iterator end_it = valid_end_locs.begin();
+
+                while( start_it != valid_start_locs.end() and end_it != valid_end_locs.end()) {
+                    mismatch_diff = end_it->second - start_it->second - 1;
+
+                    while (mismatch_diff > mismatches) {
+                        start_it = next(start_it);
+                        mismatch_diff = end_it->second - start_it->second - 1;
+                    }
+
+                    while (mismatch_diff <= mismatches) {
+                        end_it = next(end_it);
+                        mismatch_diff = end_it->second - start_it->second - 1;
+                    }
+
+                    cout << "start: " << start_it->first << "   end: " << prev(end_it)->first << endl << endl  << endl;
+
+                    start_it = next(start_it);
+                }
+            }
+        }
+
+        /*
         list<double>::iterator it = mismatch_locs.begin();
         list<double>::iterator it_offset;
 
@@ -387,6 +430,7 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
 
             palindromes->insert(tuple<int, int, int>(left, right, gap));
         }
+        */
     }
 }
 

@@ -1,143 +1,15 @@
 Palindromes of:  input.txt
-Sequence length is: 20
+Sequence length is: 50
 Start at position: 1
-End at position: 20
+End at position: 50
 Minimum length of Palindromes is: 100
 Maximum length of Palindromes is: 0
-Maximum gap between elements is: 10
+Maximum gap between elements is: 100
 Number of mismatches allowed in Palindrome: 3
 
 
 
 Palindromes:
-1        cctgtag        7
-         |  ||||         
-20       gcgcatc       14
-
-1        cct        3
-         | |         
-18       gca       16
-
-1        cctgta        6
-         |  | |         
-13       gaccct        8
-
-1        c        1
-         |         
-7        g        7
-
-1        c        1
-         |         
-4        g        4
-
-2        c        2
-         |         
-18       g       18
-
-2        ctg        4
-         |||         
-13       gac       11
-
-2        ct        3
-         ||         
-7        ga        6
-
-2        c        2
-         |         
-4        g        4
-
-3        t        3
-         |         
-16       a       16
-
-4        g        4
-         |         
-19       c       19
-
-4        gtag        7
-         ||||         
-17       catc       14
-
-4        gtag        7
-         |  |         
-14       cgac       11
-
-4        g        4
-         |         
-9        c        9
-
-5        tag        7
-         | |         
-12       acc       10
-
-5        t        5
-         |         
-6        a        6
-
-7        g        7
-         |         
-19       c       19
-
-7        gtccc       11
-         ||  |         
-17       catcg       13
-
-7        g        7
-         |         
-9        c        9
-
-8        t        8
-         |         
-12       a       12
-
-9        ccc       11
-         | |         
-20       gcg       18
-
-9        cccag       13
-         |  ||         
-18       gcatc       14
-
-9        c        9
-         |         
-13       g       13
-
-10       ccag       13
-         |  |         
-20       gcgc       17
-
-10       c       10
-         |         
-18       g       18
-
-10       c       10
-         |         
-13       g       13
-
-11       cagct       15
-         |   |         
-20       gcgca       16
-
-11       c       11
-         |         
-18       g       18
-
-13       gc       14
-         ||         
-19       cg       18
-
-14       c       14
-         |         
-20       g       20
-
-17       cg       18
-         ||         
-20       gc       19
-
-17       c       17
-         |         
-18       g       18
-
 
 
 
