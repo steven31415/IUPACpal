@@ -266,7 +266,14 @@ void realLCE_mismatches(unsigned char* text, INT i, INT j, INT n, INT * invSA, I
     }
 }
 
-void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, int S_n, int n, INT * invSA, INT * LCP, rmq_succinct_sct<> rmq, int mismatches, int max_gap) {
+void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, int S_n, int n, INT * invSA, INT * LCP, rmq_succinct_sct<> rmq, tuple<int, int, int, int> params) {
+    int min_len = get<0>(params);
+    int max_len = get<1>(params);
+    int mismatches = get<2>(params);
+    int max_gap = get<3>(params);
+
+    // cout << min_len << " " << max_len << " " << mismatches << " " << max_gap << endl;
+
     for (double c = 0; c <= (n - 1); c += 0.5 ) {
         int i, j;
 
@@ -299,9 +306,10 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
         realLCE_mismatches(S, i, j, S_n, invSA, LCP, rmq, mismatches, initial_gap, &mismatch_locs);
         mismatch_locs.push_front(-1.0);
 
-        list<pair<double, int>> valid_start_locs; // (mismatch_loc, mismatch_count)
-        list<pair<double, int>> valid_end_locs; // (mismatch_loc, mismatch_count)
+        list<pair<double, int>> valid_start_locs; // (mismatch_location, mismatch_index)
+        list<pair<double, int>> valid_end_locs; // (mismatch_location, mismatch_index)
 
+        // Determine list of valid start and end locations
         int mismatch_index = 0;
         for (list<double>::iterator it = mismatch_locs.begin(); it != mismatch_locs.end(); ++it){
             if (next(it) != mismatch_locs.end() and *next(it) != *it + 1.0) {
@@ -316,7 +324,7 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
         }
 
         // Optional printing of mismatch locations relative to centre
-        if (true) {
+        if (false) {
             cout << "c=" << c << "\t";
             cout << "[ ";
             for (list<double>::iterator it = mismatch_locs.begin(); it != mismatch_locs.end(); ++it){
@@ -326,7 +334,7 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
         }
 
         // Optional printing of valid start and end locations
-        if (true) {
+        if (false) {
             cout << "start" << "\t";
             cout << "[ ";
             for (list<pair<double, int>>::iterator it = valid_start_locs.begin(); it != valid_start_locs.end(); ++it){
@@ -344,29 +352,60 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
             cout << endl;
         }
 
-        if (c == 24.5) { //temporaily only do for 24.5 (check  this code works in general)
-            if ( !valid_start_locs.empty() and !valid_end_locs.empty() ) {
-                int mismatch_diff;
-                list<pair<double, int>>::iterator start_it = valid_start_locs.begin();
-                list<pair<double, int>>::iterator end_it = valid_end_locs.begin();
+        //if (c == 24.5) { //temp only do for 24.5 (check  this code works in general)
+        if ( !valid_start_locs.empty() and !valid_end_locs.empty() ) {
+        	// cout << "running palindrome detection for c = " << c << endl;
+            int mismatch_diff;
+            list<pair<double, int>>::iterator start_it = valid_start_locs.begin();
+            list<pair<double, int>>::iterator end_it = valid_end_locs.begin();
+            int left, right, gap;
+        	double start_mismatch, end_mismatch;
 
-                while( start_it != valid_start_locs.end() and end_it != valid_end_locs.end()) {
-                    mismatch_diff = end_it->second - start_it->second - 1;
+            while( start_it != valid_start_locs.end() and end_it != valid_end_locs.end()) {
+                mismatch_diff = end_it->second - start_it->second - 1;
 
-                    while (mismatch_diff > mismatches) {
-                        start_it = next(start_it);
-                        mismatch_diff = end_it->second - start_it->second - 1;
-                    }
-
-                    while (mismatch_diff <= mismatches) {
-                        end_it = next(end_it);
-                        mismatch_diff = end_it->second - start_it->second - 1;
-                    }
-
-                    cout << "start: " << start_it->first << "   end: " << prev(end_it)->first << endl << endl  << endl;
-
+                while (mismatch_diff > mismatches) {
                     start_it = next(start_it);
+                    mismatch_diff = end_it->second - start_it->second - 1;
                 }
+
+                while (mismatch_diff <= mismatches and end_it != valid_end_locs.end()) {
+                    end_it = next(end_it);
+                    mismatch_diff = end_it->second - start_it->second - 1;
+                }
+
+                // cout << "start: " << start_it->first << "   end: " << prev(end_it)->first << endl;
+
+                start_mismatch = start_it->first;
+                end_mismatch = prev(end_it)->first;
+
+                // cout << "start mismatch " << start_mismatch << endl;
+                // cout << "initial gap " << initial_gap << endl;
+                // cout << endl << endl  << endl;
+
+                if (start_mismatch >= initial_gap ) {
+                	break;
+                }
+
+                if (isOdd) {
+	                left = int(c - end_mismatch);
+	                right = int(c + end_mismatch);
+	                gap = int(2.0 * (start_mismatch + 1.0) + 1.0);
+	            }
+	            else {
+	                left = int(c - 0.5 - (end_mismatch - 1.0));
+	                right = int(c + 0.5 + (end_mismatch - 1.0));
+	                gap = int(2.0 * (start_mismatch + 1.0));
+	            }
+
+	            int outer_left = left + 1;
+			    int outer_right = right + 1;
+
+	            if ( (right - left + 1 - gap) / 2 >= min_len and (right - left + 1 - gap) / 2 <= max_len ) {
+	            	palindromes->insert(tuple<int, int, int>(left, right, gap));
+	            }
+
+                start_it = next(start_it);
             }
         }
 
@@ -593,7 +632,7 @@ int main() {
         }
 
         RequestInt("Enter minimum length of palindrome", &min_len, 1, 1000000, 10);
-        RequestInt("Enter maximum length of palindrome", &min_len, 1, 1000000, 100);
+        RequestInt("Enter maximum length of palindrome", &max_len, 1, 1000000, 100);
         RequestInt("Enter maximum gap between repeated regions", &max_gap, 0, 1000000, 100);
         RequestInt("Number of mismatches allowed", &mismatches, 0, 1000000, 0);
         RequestString("Input nucleotide sequence(s)", &output_file, "output.txt");
@@ -603,7 +642,7 @@ int main() {
             cout << "input_file: " << input_file << endl;
             cout << "sequence: " << seq << endl;
             cout << "min_len: " << min_len << endl;
-            cout << "min_len: " << min_len << endl;
+            cout << "max_len: " << max_len << endl;
             cout << "max_gap: " << max_gap << endl;
             cout << "mismatches: " << mismatches << endl;
             cout << "output_file: " << output_file << endl;
@@ -707,7 +746,7 @@ int main() {
         rmq_succinct_sct<> rmq(&v);
 
         // Optional printing of data structures
-        if (true) {
+        if (false) {
             cout << endl << endl;
             print_array("  seq", seq, n);
             print_array("    S", S, S_n, true);
@@ -724,7 +763,7 @@ int main() {
         set<tuple<int, int, int>> palindromes;
 
         // All palindromes calculate and stored
-        addPalindromes(&palindromes, S, S_n, n, invSA, LCP, rmq, mismatches, max_gap); 
+        addPalindromes(&palindromes, S, S_n, n, invSA, LCP, rmq, tuple<int, int, int, int>(min_len, max_len, mismatches, max_gap)); 
 
         /////////////////////////
         //  Print Palindromes  //
@@ -744,13 +783,16 @@ int main() {
         file << endl << endl << endl;
         file << "Palindromes:" << endl;
 
+        // Dummy entry to ensure all previous palindromes are encountered during sorting
+        palindromes.insert(tuple<int, int, int>(S_n, S_n, 0));
+
         if (!palindromes.empty()) {
 	        int prev_left = get<0>(*palindromes.begin());
 
 	        set<tuple<int, int, int>>::iterator it_left_to_right = palindromes.begin();
 	        set<tuple<int, int, int>>::iterator it;
 
-	        while (it_left_to_right != palindromes.end()) {
+	        while ( it_left_to_right != palindromes.end() ) {
 
 	        	int left = get<0>(*it_left_to_right);
 
@@ -782,7 +824,6 @@ int main() {
 			            for (int i = 0; i < (inner_left - outer_left + 1); ++i) {
 			                file << ( (MatchMatrix::match(seq[ outer_left - 1 + i ], complement[ seq[ outer_right - 1 - i ] ])) ? "|" : " " );
 			            }
-			            file << pad;
 			            
 			            file << endl;
 
@@ -794,6 +835,7 @@ int main() {
 
 			            file << endl << endl;
 
+			            //cout << "(" << outer_left << ", " << outer_right << ")" << endl;
 
 	            		it--;
 	            	}

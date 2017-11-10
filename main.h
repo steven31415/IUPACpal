@@ -10,5 +10,11 @@ typedef int64_t INT;
 typedef int32_t INT;
 #endif
 
+void rmq_preprocess(INT *m, INT *v, INT n);
+
+static __inline INT flog2(INT v) {
+  return (INT) floor (log2((double)(v)));
+}
+
 using namespace sdsl;
 using namespace std;
