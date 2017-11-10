@@ -12,34 +12,6 @@ typedef map< char, set<char> > I_map;
 //  HELPER FUNCTIONS  //
 ////////////////////////
 
-// nlogn RMQ preprocssing
-void rmq_preprocess( INT * m, INT * v, INT n ) 
-{
-  INT i, j;
-  INT lgn = flog2(n); 
-  for (i = 0; i < n; i++)
-    m[i*lgn] = i;
-  for (j = 1; ((( INT ) 1) << j) <= n; j++)
-    for (i = 0; i + (1 << j) - 1 < n; i++)
-      if (v[m[i*lgn + j - 1]] < v[m[(i + (1 << (j - 1)))*lgn + j - 1]])
-        m[i*lgn + j] = m[i*lgn + j - 1];
-      else
-        m[i*lgn + j] = m[(i + (1 << (j - 1)))*lgn + j - 1];
-}
-
-// nlogn RMQ query
-static __inline INT rmq(INT *m, INT *v, INT n, INT i, INT j) { //query call
-  INT lgn = flog2(n); 
-  if (i > j) {INT tmp = j; j = i; i = tmp;}
-  i++; //for LCP
-  if (i == j) return i;
-  INT k = flog2(j-i+1); 
-  INT a = m[i * lgn + k]; 
-  INT shift = ((( INT ) 1) << k);
-  INT b = m[(j - shift + 1) * lgn + k];  
-  return v[a]>v[b]?b:a;
-}
-
 // Convert a string to any type, if possible
 template <typename T>
 T ConvertString( const string &data, int* return_code)
@@ -233,32 +205,22 @@ unsigned int LCParray(unsigned char *text, INT n, INT * SA, INT * invSA, INT * L
 // Returns the Longest Common Extension between position i and j (i, j order doesn't matter)
 // Requires Text Length, Inverse Suffix Array,
 // Longest Common Prefix Array (LCP) and RMQ function over LCP
-
-
-#ifdef _USE_NLOGN_RMQ
-unsigned int LCE(INT i, INT j, INT n, INT * invSA, INT * LCP, INT * A) {
-#else
 unsigned int LCE(INT i, INT j, INT n, INT * invSA, INT * LCP, rmq_succinct_sct<> rmq) {
-#endif
-    if (i == j) {
-            return n - i;
-    }
+        if (i == j) {
+                return n - i;
+        }
 
-    INT a = invSA[i];
-    INT b = invSA[j];
-    INT c = 0;
+        INT a = invSA[i];
+        INT b = invSA[j];
+        INT c = 0;
 
-    if (a > b) {
-            c = a;
-            a = b;
-            b = c;
-    }
+        if (a > b) {
+                c = a;
+                a = b;
+                b = c;
+        }
 
-    #ifdef _USE_NLOGN_RMQ
-        return LCP[rmq(A, LCP, l, a + 1, b)];
-    #else
         return LCP[rmq(a + 1, b)];
-    #endif
 }
 
 // Calculates a list of longest common extensions, corresponding to 0, 1, 2, ... allowed mismatches
@@ -304,15 +266,13 @@ void realLCE_mismatches(unsigned char* text, INT i, INT j, INT n, INT * invSA, I
     }
 }
 
-#ifdef _USE_NLOGN_RMQ
-void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, int S_n, int n, INT * invSA, INT * LCP, INT * A, tuple<int, int, int, int> params) {
-#else
 void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, int S_n, int n, INT * invSA, INT * LCP, rmq_succinct_sct<> rmq, tuple<int, int, int, int> params) {
-#endif
     int min_len = get<0>(params);
     int max_len = get<1>(params);
     int mismatches = get<2>(params);
     int max_gap = get<3>(params);
+
+    // cout << min_len << " " << max_len << " " << mismatches << " " << max_gap << endl;
 
     for (double c = 0; c <= (n - 1); c += 0.5 ) {
         int i, j;
@@ -343,13 +303,7 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
         }
 
         list<double> mismatch_locs;
-
-        #ifdef _USE_NLOGN_RMQ
-            realLCE_mismatches(S, i, j, S_n, invSA, LCP, A, mismatches, initial_gap, &mismatch_locs);
-        #else
-            realLCE_mismatches(S, i, j, S_n, invSA, LCP, rmq, mismatches, initial_gap, &mismatch_locs);
-        #endif
-
+        realLCE_mismatches(S, i, j, S_n, invSA, LCP, rmq, mismatches, initial_gap, &mismatch_locs);
         mismatch_locs.push_front(-1.0);
 
         list<pair<double, int>> valid_start_locs; // (mismatch_location, mismatch_index)
@@ -398,7 +352,9 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
             cout << endl;
         }
 
+        //if (c == 24.5) { //temp only do for 24.5 (check  this code works in general)
         if ( !valid_start_locs.empty() and !valid_end_locs.empty() ) {
+        	// cout << "running palindrome detection for c = " << c << endl;
             int mismatch_diff;
             list<pair<double, int>>::iterator start_it = valid_start_locs.begin();
             list<pair<double, int>>::iterator end_it = valid_end_locs.begin();
@@ -418,8 +374,14 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
                     mismatch_diff = end_it->second - start_it->second - 1;
                 }
 
+                // cout << "start: " << start_it->first << "   end: " << prev(end_it)->first << endl;
+
                 start_mismatch = start_it->first;
                 end_mismatch = prev(end_it)->first;
+
+                // cout << "start mismatch " << start_mismatch << endl;
+                // cout << "initial gap " << initial_gap << endl;
+                // cout << endl << endl  << endl;
 
                 if (start_mismatch >= initial_gap ) {
                 	break;
@@ -775,24 +737,13 @@ int main() {
         //  Calculate RMQ of LCP  //
         ////////////////////////////
 
-        #ifdef _USE_NLOGN_RMQ
-            INT l = S_n;
-            INT lgl = flog2( l );
-            INT * A = ( INT * ) calloc( ( INT ) l * lgl, sizeof(INT) );
-            rmq_preprocess(A, LCP, l);
+        int_vector<> v(S_n , 0); // Create a vector of length n and initialize it with 0s
+        for ( INT i = 0; i < S_n; i ++ )
+        {
+                v[i] = LCP[i];
+        }
 
-            cout << "Using O(nlogn) RMQ" << endl;
-        #else
-            int_vector<> v(S_n , 0); // Create a vector of length n and initialize it with 0s
-            for ( INT i = 0; i < S_n; i ++ )
-            {
-                    v[i] = LCP[i];
-            }
-
-            rmq_succinct_sct<> rmq(&v);
-
-            cout << "Using O(n) RMQ" << endl;
-        #endif
+        rmq_succinct_sct<> rmq(&v);
 
         // Optional printing of data structures
         if (false) {
@@ -812,11 +763,7 @@ int main() {
         set<tuple<int, int, int>> palindromes;
 
         // All palindromes calculate and stored
-        #ifdef _USE_NLOGN_RMQ
-            addPalindromes(&palindromes, S, S_n, n, invSA, LCP, A, tuple<int, int, int, int>(min_len, max_len, mismatches, max_gap));
-        #else
-            addPalindromes(&palindromes, S, S_n, n, invSA, LCP, rmq, tuple<int, int, int, int>(min_len, max_len, mismatches, max_gap));
-        #endif
+        addPalindromes(&palindromes, S, S_n, n, invSA, LCP, rmq, tuple<int, int, int, int>(min_len, max_len, mismatches, max_gap)); 
 
         /////////////////////////
         //  Print Palindromes  //
@@ -888,6 +835,8 @@ int main() {
 
 			            file << "\n" << "\n";
 
+			            //cout << "(" << outer_left << ", " << outer_right << ")" << endl;
+
 	            		it--;
 	            	}
 	            }
@@ -910,10 +859,6 @@ int main() {
         free(SA);
         free(invSA);
         free(LCP);
-
-        #ifdef _USE_NLOGN_RMQ
-            free(A)
-        #endif
 
         return 0;
 }
