@@ -255,7 +255,7 @@ unsigned int LCE(INT i, INT j, INT n, INT * invSA, INT * LCP, rmq_succinct_sct<>
     }
 
     #ifdef _USE_NLOGN_RMQ
-        return LCP[rmq(A, LCP, l, a + 1, b)];
+        return LCP[rmq(A, LCP, n, a + 1, b)];
     #else
         return LCP[rmq(a + 1, b)];
     #endif
@@ -269,7 +269,11 @@ unsigned int LCE(INT i, INT j, INT n, INT * invSA, INT * LCP, rmq_succinct_sct<>
 // Longest Common Prefix Array (LCP), RMQ function over LCP, Match Matrix, mismatches (max allowed) and initial_gap
 // Only starts counting mismatches that occur after initial gap, however earlier mismatches are still stored
 // Should only be used after MatchMatrix has been instantiated with necessary data
+#ifdef _USE_NLOGN_RMQ
+void realLCE_mismatches(unsigned char* text, INT i, INT j, INT n, INT * invSA, INT * LCP, INT * A, int mismatches, int initial_gap, list<double>* mismatch_locs) {
+#else
 void realLCE_mismatches(unsigned char* text, INT i, INT j, INT n, INT * invSA, INT * LCP, rmq_succinct_sct<> rmq, int mismatches, int initial_gap, list<double>* mismatch_locs) {
+#endif
     if ( i == j ) {
         mismatch_locs->push_back( n - i );
     }
@@ -277,7 +281,11 @@ void realLCE_mismatches(unsigned char* text, INT i, INT j, INT n, INT * invSA, I
         int real_lce = 0;
 
         while (mismatches >= 0) {
+            #ifdef _USE_NLOGN_RMQ
+            real_lce = real_lce + LCE(i + real_lce, j + real_lce, n, invSA, LCP, A);
+            #else
             real_lce = real_lce + LCE(i + real_lce, j + real_lce, n, invSA, LCP, rmq);
+            #endif
 
             if ( i + real_lce >= (n / 2) or j + real_lce >= n ) {
                 break;
@@ -516,6 +524,12 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
 ////////////////////
 
 int main() {
+
+        #ifdef _USE_NLOGN_RMQ
+            cout << "_USE_NLOGN_RMQ is defined" << endl;
+        #else
+            cout << "_USE_NLOGN_RMQ is NOT defined" << endl;
+        #endif
 
         //////////////////////////////
         //  Determine Match Matrix  //
@@ -795,7 +809,7 @@ int main() {
         #endif
 
         // Optional printing of data structures
-        if (false) {
+        if (true) {
             cout << endl << endl;
             print_array("  seq", seq, n);
             print_array("    S", S, S_n, true);
@@ -901,6 +915,17 @@ int main() {
 
         file.close();
 
+
+        for (int i = 0; i < S_n; ++i) {
+            for (int j = 0; j < S_n; ++j) {
+                #ifdef _USE_NLOGN_RMQ
+                cout << "(" << i << ", " << j << ") = " << LCE(i, j, S_n, invSA, LCP, A) << endl;
+                #else
+                cout << "(" << i << ", " << j << ") = " << LCE(i, j, S_n, invSA, LCP, rmq) << endl;
+                #endif
+            }
+        }
+
         ///////////////////
         //  Free Memory  //
         ///////////////////
@@ -912,7 +937,7 @@ int main() {
         free(LCP);
 
         #ifdef _USE_NLOGN_RMQ
-            free(A)
+            free(A);
         #endif
 
         return 0;
