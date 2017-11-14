@@ -255,9 +255,9 @@ unsigned int LCE(INT i, INT j, INT n, INT * invSA, INT * LCP, rmq_succinct_sct<>
     }
 
     #ifdef _USE_NLOGN_RMQ
-        return LCP[rmq(A, LCP, n, a + 1, b)];
+        return LCP[rmq(A, LCP, n, a, b)]; // rmq(a, b) does not include "a" value
     #else
-        return LCP[rmq(a + 1, b)];
+        return LCP[rmq(a + 1, b)]; // rmq(a, b) does include "a" value
     #endif
 }
 
@@ -290,12 +290,6 @@ void realLCE_mismatches(unsigned char* text, INT i, INT j, INT n, INT * invSA, I
             if ( i + real_lce >= (n / 2) or j + real_lce >= n ) {
                 break;
             }
-
-        	/*
-            if (text[i + real_lce] == '$' or text[j + real_lce] == '#') {
-                break;
-            }
-            */
 
             char s1 = text[i + real_lce];
             char s2 = text[j + real_lce];
@@ -914,17 +908,6 @@ int main() {
         file << endl << endl << endl;
 
         file.close();
-
-
-        for (int i = 0; i < S_n; ++i) {
-            for (int j = 0; j < S_n; ++j) {
-                #ifdef _USE_NLOGN_RMQ
-                cout << "(" << i << ", " << j << ") = " << LCE(i, j, S_n, invSA, LCP, A) << endl;
-                #else
-                cout << "(" << i << ", " << j << ") = " << LCE(i, j, S_n, invSA, LCP, rmq) << endl;
-                #endif
-            }
-        }
 
         ///////////////////
         //  Free Memory  //
