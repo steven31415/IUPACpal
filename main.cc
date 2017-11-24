@@ -419,6 +419,93 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
 
 int main(int argc, char* argv[]) {
 
+        ///////////////////////
+        //  REQUEST OPTIONS  //
+        ///////////////////////
+
+        string input_file = "";
+        int min_len = 10;
+        int max_len = 100;
+        int max_gap = 100;
+        int mismatches = 0;
+        string output_file = "IUPACpal.out";
+
+	    int c;
+	    while( ( c = getopt (argc, argv, "f:m:M:g:x:o:") ) != -1 ) 
+	    {
+	        switch(c)
+	        {
+	            case 'f':
+	                if(optarg) input_file = optarg;
+	                break;
+	            case 'm':
+	                if(optarg) min_len = std::atoi(optarg);
+	                break;
+	            case 'M':
+	                if(optarg) max_len = std::atoi(optarg);
+	                break;
+	            case 'g':
+	                if(optarg) max_gap = std::atoi(optarg);
+	                break;
+	            case 'x':
+	                if(optarg) mismatches = std::atoi(optarg);
+	                break;
+	            case 'o':
+	                if(optarg) output_file = optarg;
+	                break;
+	        }
+	    }
+
+	    ///////////////////////
+        //  VERIFY OPTIONS   //
+        ///////////////////////
+
+        if (!exist(input_file.c_str())) {  usage(); cout << "Error: input_file not found" << endl; return -1; }
+
+	    ifstream in(input_file);
+        string contents((std::istreambuf_iterator<char>(in)), 
+        istreambuf_iterator<char>());
+        long int n = contents.length();
+        unsigned char * seq = ( unsigned char* ) malloc( ( n ) * sizeof( unsigned char ) );
+
+        for (int i = 0; i < n; ++i) {
+            seq[i] = contents[i];
+        }
+
+        if (min_len < 2) { usage(); cout << "Error: min_len must not be less than 2" << endl; return -1; }
+        if (min_len > INT_MAX) { usage(); cout << "Error: min_len must not greater than " << INT_MAX << endl; return -1; }
+        if (max_len < 0) { usage(); cout << "Error: max_len must not be a negative value" << endl; return -1; }
+        if (max_len > INT_MAX) { usage(); cout << "Error: max_len must not greater than " << INT_MAX << endl; return -1; }
+        if (max_gap < 0) { usage(); cout << "Error: max_gap must not be a negative value" << endl; return -1; }
+        if (max_gap > INT_MAX) { usage(); cout << "Error: max_gap must not greater than " << INT_MAX << endl; return -1; }
+        if (mismatches < 0) { usage(); cout << "Error: mismatches must not be a negative value" << endl; return -1; }
+        if (mismatches > INT_MAX) { usage(); cout << "Error: mismatches must not greater than " << INT_MAX << endl; return -1; }
+
+        if (min_len >= n) { usage(); cout << "Error: min_len must be less than sequence length" << endl; return -1; }
+        if (max_len < min_len) { usage(); cout << "Error: max_len must not be less than min_len" << endl; return -1; }
+        if (max_gap >= n) { usage(); cout << "Error: max_gap must be less than sequence length" << endl; return -1; }
+        if (min_len >= n) { usage(); cout << "Error: min_len must be less than sequence length" << endl; return -1; }
+        if (mismatches >= n) { usage(); cout << "Error: mismatches must be less than sequence length" << endl; return -1; }
+        if (mismatches >= min_len) { usage(); cout << "Error: mismatches must be less than min_len" << endl; return -1; }
+        
+        // Display user given options
+        if (true) {
+        	cout << endl;
+            cout << "input_file: " << input_file << endl;
+
+            // Optional printing of sequence data
+            if (false) {
+            	cout << "sequence: " << contents << endl;
+            }
+
+            cout << "min_len: " << min_len << endl;
+            cout << "max_len: " << max_len << endl;
+            cout << "max_gap: " << max_gap << endl;
+            cout << "mismatches: " << mismatches << endl;
+            cout << "output_file: " << output_file << endl;
+            cout << endl;
+        }
+
         //////////////////////////////
         //  Determine Match Matrix  //
         //////////////////////////////
@@ -451,6 +538,7 @@ int main(int argc, char* argv[]) {
         IUPAC_map_insert(&IUPAC_map, IUPAC_to_value, 'h', {'a', 'c', 't'});
         IUPAC_map_insert(&IUPAC_map, IUPAC_to_value, 'v', {'a', 'c', 'g'});
         IUPAC_map_insert(&IUPAC_map, IUPAC_to_value, 'n', {'a', 'c', 'g', 't'});
+
         // Note: 'u' and 't' are identical
 
         // Non-IUPAC characters $ and # to be used within suffix tree
@@ -549,93 +637,6 @@ int main(int argc, char* argv[]) {
         complement['h'] = 'd';
         complement['v'] = 'b';
         complement['n'] = 'n';
-
-        ///////////////////////
-        //  REQUEST OPTIONS  //
-        ///////////////////////
-
-        string input_file = "";
-        int min_len = 10;
-        int max_len = 100;
-        int max_gap = 100;
-        int mismatches = 0;
-        string output_file = "IUPACpal.out";
-
-	    int c;
-	    while( ( c = getopt (argc, argv, "f:m:M:g:x:o:") ) != -1 ) 
-	    {
-	        switch(c)
-	        {
-	            case 'f':
-	                if(optarg) input_file = optarg;
-	                break;
-	            case 'm':
-	                if(optarg) min_len = std::atoi(optarg);
-	                break;
-	            case 'M':
-	                if(optarg) max_len = std::atoi(optarg);
-	                break;
-	            case 'g':
-	                if(optarg) max_gap = std::atoi(optarg);
-	                break;
-	            case 'x':
-	                if(optarg) mismatches = std::atoi(optarg);
-	                break;
-	            case 'o':
-	                if(optarg) output_file = optarg;
-	                break;
-	        }
-	    }
-
-	    ///////////////////////
-        //  VERIFY OPTIONS   //
-        ///////////////////////
-
-        if (!exist(input_file.c_str())) {  usage(); cout << "Error: input_file not found" << endl; return -1; }
-
-	    ifstream in(input_file);
-        string contents((std::istreambuf_iterator<char>(in)), 
-        istreambuf_iterator<char>());
-        long int n = contents.length();
-        unsigned char * seq = ( unsigned char* ) malloc( ( n ) * sizeof( unsigned char ) );
-
-        for (int i = 0; i < n; ++i) {
-            seq[i] = contents[i];
-        }
-
-        if (min_len < 2) { usage(); cout << "Error: min_len must not be less than 2" << endl; return -1; }
-        if (min_len > INT_MAX) { usage(); cout << "Error: min_len must not greater than " << INT_MAX << endl; return -1; }
-        if (max_len < 0) { usage(); cout << "Error: max_len must not be a negative value" << endl; return -1; }
-        if (max_len > INT_MAX) { usage(); cout << "Error: max_len must not greater than " << INT_MAX << endl; return -1; }
-        if (max_gap < 0) { usage(); cout << "Error: max_gap must not be a negative value" << endl; return -1; }
-        if (max_gap > INT_MAX) { usage(); cout << "Error: max_gap must not greater than " << INT_MAX << endl; return -1; }
-        if (mismatches < 0) { usage(); cout << "Error: mismatches must not be a negative value" << endl; return -1; }
-        if (mismatches > INT_MAX) { usage(); cout << "Error: mismatches must not greater than " << INT_MAX << endl; return -1; }
-
-        if (min_len >= n) { usage(); cout << "Error: min_len must be less than sequence length" << endl; return -1; }
-        if (max_len < min_len) { usage(); cout << "Error: max_len must not be less than min_len" << endl; return -1; }
-        if (max_gap >= n) { usage(); cout << "Error: max_gap must be less than sequence length" << endl; return -1; }
-        if (min_len >= n) { usage(); cout << "Error: min_len must be less than sequence length" << endl; return -1; }
-        if (mismatches >= n) { usage(); cout << "Error: mismatches must be less than sequence length" << endl; return -1; }
-        if (mismatches >= min_len) { usage(); cout << "Error: mismatches must be less than min_len" << endl; return -1; }
-        
-        // Display user given options
-        if (true) {
-        	cout << endl;
-            cout << "input_file: " << input_file << endl;
-
-            // Optional printing of sequence data
-            if (false) {
-            	cout << "sequence: " << contents << endl;
-            }
-
-            cout << "min_len: " << min_len << endl;
-            cout << "max_len: " << max_len << endl;
-            cout << "max_gap: " << max_gap << endl;
-            cout << "mismatches: " << mismatches << endl;
-            cout << "output_file: " << output_file << endl;
-            cout << endl;
-        }
 
         ////////////////////////////////////////////////////
         //  Construct S = seq $ complement(reverse(seq) # //
