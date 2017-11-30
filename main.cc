@@ -217,9 +217,9 @@ unsigned int LCE(INT i, INT j, INT n, INT * invSA, INT * LCP, rmq_succinct_sct<>
     }
 
     #ifdef _USE_NLOGN_RMQ
-        return LCP[rmq(A, LCP, n, a + 1, b)];
+        return LCP[rmq(A, LCP, n, a, b)]; // rmq(a, b) does not include "a" value
     #else
-        return LCP[rmq(a + 1, b)];
+        return LCP[rmq(a + 1, b)]; // rmq(a, b) does include "a" value
     #endif
 }
 
@@ -257,6 +257,7 @@ void realLCE_mismatches(unsigned char* text, INT i, INT j, INT n, INT * invSA, I
             char s2 = text[j + real_lce];
 
             if ( !MatchMatrix::match(s1, s2) ) {
+
                 mismatch_locs->push_back( real_lce );
                 if (real_lce >= initial_gap) {
                     mismatches--;
@@ -279,6 +280,7 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
     int max_gap = get<3>(params);
 
     for (double c = 0; c <= (n - 1); c += 0.5 ) {
+
         int i, j;
 
         // Determine if centre corresponds to odd or even palindrome
@@ -848,20 +850,6 @@ int main(int argc, char* argv[]) {
         file << endl << endl << endl;
 
         file.close();
-
-        ///////////////////
-        //  Free Memory  //
-        ///////////////////
-
-        free(match_matrix);
-        free(seq);
-        free(SA);
-        free(invSA);
-        free(LCP);
-
-        #ifdef _USE_NLOGN_RMQ
-            free(A);
-        #endif
 
         return 0;
 }
