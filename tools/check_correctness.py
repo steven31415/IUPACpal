@@ -76,13 +76,12 @@ def getPalindromes(file):
 
 
 if (len(sys.argv)) != 4:
-	print("Incorrect number of arguments: Must provide 2 filesnames and 1 integer (input_text, output_to_be_checked, max_mismatches)")
+	print("Incorrect number of arguments: Must provide 2 filenames and 1 integer (input_text, output_to_be_checked, max_mismatches)")
 	sys.exit(-1)
 
 filename_input = sys.argv[1]
 filename_output = sys.argv[2]
 max_mismatches = int(sys.argv[3])
-print(max_mismatches)
 
 file_output = open(filename_output, 'r')
 p = getPalindromes(file_output)
@@ -114,9 +113,31 @@ for palindrome in p:
 	if (valid_find):
 		correct += 1
 	else:
+		print("BAD: " + "[" + str(outer_left + 1) + ", " + str(inner_left + 1) + "]-[" + str(inner_right + 1) + ", " + str(outer_right + 1) + "]")
+
+		bad_palindrome = ""
+		for i in range(outer_left, inner_left + 1):
+			bad_palindrome += data[i]
+
+		bad_palindrome += '\n'
+
+		for i in range(0, inner_left - outer_left + 1):
+			if ( checkMatch(data[outer_left + i], data[outer_right - i]) ):
+				bad_palindrome += "|"
+			else:
+				bad_palindrome += " "
+
+		bad_palindrome += "\n"
+
+		for i in range(outer_right, inner_right - 1, -1):
+			bad_palindrome += data[i]
+
+		print(bad_palindrome)
+		print("\n")
+
 		incorrect += 1
 
-
+print("Mismatches: " + str(max_mismatches))
 print("File Input: " + filename_input)
 print("File Output: " + filename_output)
 print("")
