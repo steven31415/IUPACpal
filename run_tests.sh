@@ -19,6 +19,9 @@ if [ $# -ne 1 ]; then
   exit -1
 fi
 
+today=`date +%Y-%m-%d.%H:%M:%S`
+printf "test_no\tsoftware\tfile\tmin_length\tmax_length\tmax_gap\tmismatches\ttotal_pals\tshared_pals\tunique_pals\tcorrect_pals\tincorrect_pals\truntime\n" > "test_results_$today.csv"
+
 FILENAME="$1"
 TEST_COUNT=1
 while read -r LINE
@@ -96,6 +99,9 @@ do
 
 
   echo "Test $TEST_COUNT complete"
+
+  printf "$TEST_COUNT\tIUPACpal\t$f_IUPACpal\t$m\t$M\t$g\t$x\t$TOTAL_IN_IUPACPAL\t$IN_BOTH\t$ONLY_IN_IUPACPAL\t$IUPACPAL_CORRECT_PALS\t$IUPACPAL_INCORRECT_PALS\t$IUPACPAL_TIME_TAKEN\n" >> "test_results_$today.csv"
+  printf "$TEST_COUNT\temboss\t$f_emboss\t$m\t$M\t$g\t$x\t$TOTAL_IN_EMBOSS\t$IN_BOTH\t$ONLY_IN_EMBOSS\t$EMBOSS_CORRECT_PALS\t$EMBOSS_INCORRECT_PALS\t$EMBOSS_TIME_TAKEN\n" >> "test_results_$today.csv"
 
   echo
 	echo
