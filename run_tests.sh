@@ -59,7 +59,7 @@ do
 	stop_measuring_time
 	get_elapsed_time
   IUPACPAL_TIME_TAKEN=$result
-  echo "IUPACpal: $IUPACPAL_TIME_TAKEN seconds"
+  echo "IUPACpal:              $IUPACPAL_TIME_TAKEN seconds"
 
 
   start_measuring_time
@@ -67,7 +67,7 @@ do
   stop_measuring_time
   get_elapsed_time
   EMBOSS_TIME_TAKEN=$result
-  echo "emboss:   $EMBOSS_TIME_TAKEN seconds"
+  echo "emboss:                $EMBOSS_TIME_TAKEN seconds"
 	
 
   python tools/compare_output.py IUPACpal.out emboss_palindrome.out > compare.out
@@ -77,11 +77,11 @@ do
   ONLY_IN_IUPACPAL=$(awk '{print $2}' compare.out | sed -n '8p')
   ONLY_IN_EMBOSS=$(awk '{print $2}' compare.out | sed -n '9p')
 
-  echo "Pals in IUPACpal: $TOTAL_IN_IUPACPAL"
-  echo "Pals in emboss:   $TOTAL_IN_EMBOSS"
-  echo "Pals in both:     $IN_BOTH"
-  echo "Only in IUPACpal: $ONLY_IN_IUPACPAL"
-  echo "Only in emboss:   $ONLY_IN_EMBOSS"
+  echo "Pals in IUPACpal:      $TOTAL_IN_IUPACPAL"
+  echo "Pals in emboss:        $TOTAL_IN_EMBOSS"
+  echo "Pals in both:          $IN_BOTH"
+  echo "Only in IUPACpal:      $ONLY_IN_IUPACPAL"
+  echo "Only in emboss:        $ONLY_IN_EMBOSS"
 
 
   python tools/check_correctness.py $f_IUPACpal IUPACpal.out $x > correctness.out
@@ -94,8 +94,8 @@ do
   python tools/check_correctness.py $f_IUPACpal emboss_palindrome.out $x > correctness.out
   EMBOSS_CORRECT_PALS=$(awk '{print $3}' correctness.out | sed -n '6p')
   EMBOSS_INCORRECT_PALS=$(awk '{print $3}' correctness.out | sed -n '7p')
-  echo "Correct in emboss:   $EMBOSS_CORRECT_PALS"
-  echo "Incorrect in emboss: $EMBOSS_INCORRECT_PALS"
+  echo "Correct in emboss:     $EMBOSS_CORRECT_PALS"
+  echo "Incorrect in emboss:   $EMBOSS_INCORRECT_PALS"
 
 
   echo "Test $TEST_COUNT complete"
