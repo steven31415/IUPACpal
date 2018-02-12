@@ -97,12 +97,12 @@ while (i < len(p1_sorted) or j < len(p2_sorted)):
 
 
 
-print("File 1: " + filename1)
-print("File 2: " + filename2)
+print("File_1: " + filename1)
+print("File_2: " + filename2)
 print("")
-print("File 1 Total Found: " + str(len(p1)))
-print("File 2 Total Found: " + str(len(p2)))
+print("File_1_Total_Found: " + str(len(p1)))
+print("File_2_Total_Found: " + str(len(p2)))
 print("")
-print("Common to both: " + str(common))
-print("Only in File 1: " + str(one_only))
-print("Only in File 2: " + str(two_only))
+print("Common_to_both: " + str(common))
+print("Only_in_File_1: " + str(one_only))
+print("Only_in_File_2: " + str(two_only))
