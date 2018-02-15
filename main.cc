@@ -391,6 +391,8 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
                 	break;
                 }
 
+                //cout << "start: " << start_mismatch << "  " << "end: " << end_mismatch << endl; //TEMP
+
                 if (isOdd) {
 	                left = int(c - end_mismatch);
 	                right = int(c + end_mismatch);
@@ -402,12 +404,24 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
 	                gap = int(2.0 * (start_mismatch + 1.0));
 	            }
 
+                //cout << "left: " << left << "  " << "right: " << right << "  " << "gap: " << gap << endl << endl; //TEMP
+
 	            int outer_left = left + 1;
 			    int outer_right = right + 1;
 
-	            if ( (right - left + 1 - gap) / 2 >= min_len and (right - left + 1 - gap) / 2 <= max_len ) {
-	            	palindromes->insert(tuple<int, int, int>(left, right, gap));
+	            if ( (right - left + 1 - gap) / 2 >= min_len ) {
+                    if ( (right - left + 1 - gap) / 2 <= max_len ) {
+                        // Palindrome within limits
+                        palindromes->insert(tuple<int, int, int>(left, right, gap));
+                    }
+                    else {
+                        // Palindrome exceeds max length, so truncate
+                        int overshoot = ( (right - left + 1 - gap) / 2 ) - max_len;
+                        palindromes->insert(tuple<int, int, int>(left + overshoot, right - overshoot, gap));
+                    }
 	            }
+
+
 
                 start_it = next(start_it);
             }
