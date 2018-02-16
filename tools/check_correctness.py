@@ -129,7 +129,8 @@ for palindrome in p:
 	if (error == ""):
 		correct += 1
 	else:
-		print("BAD (" + error + "): " + "[" + str(outer_left + 1) + ", " + str(inner_left + 1) + "]-[" + str(inner_right + 1) + ", " + str(outer_right + 1) + "]")
+		if (false):
+			print("BAD (" + error + "): " + "[" + str(outer_left + 1) + ", " + str(inner_left + 1) + "]-[" + str(inner_right + 1) + ", " + str(outer_right + 1) + "]")
 
 		bad_palindrome = ""
 		for i in range(outer_left, inner_left + 1):
@@ -153,7 +154,6 @@ for palindrome in p:
 
 		incorrect += 1
 
-print("")
 print("Min Length: " + str(min_length))
 print("Max Length: " + str(max_length))
 print("Gap: " + str(max_gap))
@@ -164,4 +164,3 @@ print("")
 print("Total Palindromes: \t" + str(len(p)))
 print("Correct Palindromes: \t" + str(correct))
 print("Incorrect Palindromes: \t" + str(incorrect))
-print("")
