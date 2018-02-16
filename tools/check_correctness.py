@@ -74,14 +74,16 @@ def getPalindromes(file):
 
 	return palindromes
 
-
-if (len(sys.argv)) != 4:
-	print("Incorrect number of arguments: Must provide 2 filenames and 1 integer (input_text, output_to_be_checked, max_mismatches)")
+if (len(sys.argv)) != 7:
+	print("Incorrect number of arguments: Must provide 2 filenames and 4 integers (input_text, output_to_be_checked, min_length, max_length, max_gap, mismatches)")
 	sys.exit(-1)
 
 filename_input = sys.argv[1]
 filename_output = sys.argv[2]
-max_mismatches = int(sys.argv[3])
+min_length = int(sys.argv[3])
+max_length = int(sys.argv[4])
+max_gap = int(sys.argv[5])
+max_mismatches = int(sys.argv[6])
 
 file_output = open(filename_output, 'r')
 p = getPalindromes(file_output)
@@ -101,19 +103,33 @@ for palindrome in p:
 
 	valid_find = True
 	mismatches = 0
+	gap = inner_right - inner_left - 1
+	length = outer_right - inner_right + 1
+	error = ""
+
 
 	for i in range(0, outer_right - inner_right + 1):
 		if not checkMatch(data[outer_left + i], data[outer_right - i]):
 			mismatches += 1
 			
 			if mismatches > max_mismatches:
-				valid_find = False
+				error = "TOO MANY MISMATCHES"
 				break
 
-	if (valid_find):
+	if gap > max_gap:
+		error = "GAP TOO LARGE"
+
+	if length > max_length:
+		error = "TOO LONG"
+
+	if length < min_length:
+		error = "TOO SHORT"
+
+
+	if (error == ""):
 		correct += 1
 	else:
-		print("BAD: " + "[" + str(outer_left + 1) + ", " + str(inner_left + 1) + "]-[" + str(inner_right + 1) + ", " + str(outer_right + 1) + "]")
+		print("BAD (" + error + "): " + "[" + str(outer_left + 1) + ", " + str(inner_left + 1) + "]-[" + str(inner_right + 1) + ", " + str(outer_right + 1) + "]")
 
 		bad_palindrome = ""
 		for i in range(outer_left, inner_left + 1):
@@ -137,10 +153,15 @@ for palindrome in p:
 
 		incorrect += 1
 
+print("")
+print("Min Length: " + str(min_length))
+print("Max Length: " + str(max_length))
+print("Gap: " + str(max_gap))
 print("Mismatches: " + str(max_mismatches))
 print("File Input: " + filename_input)
 print("File Output: " + filename_output)
 print("")
-print("Total palindromes: \t" + str(len(p)))
-print("Correct palindromes: \t" + str(correct))
-print("Incorrect palindromes: \t" + str(incorrect))
+print("Total Palindromes: \t" + str(len(p)))
+print("Correct Palindromes: \t" + str(correct))
+print("Incorrect Palindromes: \t" + str(incorrect))
+print("")
