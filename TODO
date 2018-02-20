@@ -1,0 +1,4 @@
+- make IUPACpal accept FASTA or plaintext
+- comment and simply output of tools programs
+- put run_tests.sh and tests.sfg within tools folder
+- run timing tests

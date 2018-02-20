@@ -1,11 +1,13 @@
-#include <divsufsort64.h> // include header for suffix sort
-#include <sdsl/rmq_support.hpp> //include header for range minimum queries
-#include <sdsl/bit_vectors.hpp> // include header for bit vectors
+#include <divsufsort64.h> // Header for suffix sort
+#include <sdsl/rmq_support.hpp> // Header for Range Minimum Queries
+#include <sdsl/bit_vectors.hpp> // Header for bit vectors
 
+// Enforce use of 64-bit integers if intructed by compiler to do so
 #ifdef _USE_64
 typedef int64_t INT;
 #endif
 
+// Enforce use of 32-bit integers if intructed by compiler to do so
 #ifdef _USE_32
 typedef int32_t INT;
 #endif

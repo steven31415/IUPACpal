@@ -1,23 +1,25 @@
 Pre-installation Instructions
 =============================
 
-This installation requires the pre-installation of the cmake tool,
-a C++ compiler, and the libraries: libdivsufsort and sdsl.
+This installation requires the pre-installation of the cmake tool, a C++
+compiler, and the libraries: libdivsufsort and sdsl.
 
-For Linux, you can install libraries libdivsufsort and sdsl via
+For Linux, you can install libraries libdivsufsort and sdsl with the included
+installer via the command:
 
 $ ./pre-install.sh 
+
 
 Basic Instructions
 ==================
 
-The shell command `make -f Makefile.32-bit.gcc' should compile this 
-program for 32-bit integers. 
-   
-The shell command `make -f Makefile.64-bit.gcc' should compile this 
-program for 64-bit integers. This requires double the amount of memory.
+The shell command 'make -f Makefile.gcc' will compile this program
+for 64-bit integers using the recommended type of Range Minimum Queries (rmq1).
+This requires double the amount of memory as 32-bit integers.
 
-After compilation the binary `IUPACPal' will be created in the working 
-directory, e.g. you may call it from this directory via
+After compilation the binary 'IUPACpal' will be created in the working
+directory, you may call it from this directory via the command:
 
 $ ./IUPACpal <arguments>
+
+Run the above command without arguments, to print basic documentation of arguments.
