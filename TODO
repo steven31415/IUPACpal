@@ -1,4 +1,6 @@
 - make IUPACpal accept FASTA or plaintext
+- make '-' (used for indeterminate gap lengths) be interpreted as 'n', and specify this in README
+- create a README
 - comment and simply output of tools programs
 - put run_tests.sh and tests.sfg within tools folder
 - run timing tests
