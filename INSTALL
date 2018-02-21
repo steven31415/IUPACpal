@@ -8,7 +8,7 @@ and a C++ compiler are installed before proceeding with the below instructions.
 For Linux, you can install libraries libdivsufsort and sdsl with the included
 installer via the command:
 
-$ ./pre-install.sh 
+$ sudo ./pre-install.sh 
 
 
 Basic Instructions
