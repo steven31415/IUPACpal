@@ -1,4 +1,5 @@
 - make IUPACpal accept FASTA or plaintext
+- free mallocs and test for memory leaks
 - make '-' (used for indeterminate gap lengths) be interpreted as 'n', and specify this in README
 - create a README
 - comment and simply output of tools programs
