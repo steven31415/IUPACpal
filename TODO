@@ -1,3 +1,4 @@
 - Create README
-- Put run_tests.sh and tests.sfg within tools folder
+- Update IUPACpal_test.sh
+- Finish timing_tests.sh and timing_tests.cfg
 - Run timing tests
