@@ -23,4 +23,3 @@ for i in range(0, int(length)):
 F = open('randDNA.out', 'w')
 F.write(output)
 F.close()
-

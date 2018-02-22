@@ -1,5 +1,6 @@
 import sys
 
+# Make matching set
 match_set = {}
 match_set['a'] = ['a']
 match_set['c'] = ['c']
@@ -17,7 +18,10 @@ match_set['d'] = ['a', 'g', 't']
 match_set['h'] = ['a', 'c', 't']
 match_set['v'] = ['a', 'c', 'g']
 match_set['n'] = ['a', 'c', 'g', 't']
+match_set['*'] = ['a', 'c', 'g', 't']
+match_set['-'] = ['a', 'c', 'g', 't']
 
+# Store alphabet complements
 complement = {}
 complement['a'] = 't'
 complement['c'] = 'g'
@@ -35,9 +39,10 @@ complement['d'] = 'h'
 complement['h'] = 'd'
 complement['v'] = 'b'
 complement['n'] = 'n'
+complement['-'] = 'n'
+complement['*'] = 'n'
 
-
-
+# Check match of two characters
 def checkMatch(x, y):
 	x_set = match_set[x]
 	y_set = match_set[y]
@@ -48,8 +53,7 @@ def checkMatch(x, y):
 
 	return False
 
-
-
+# Extract list of palindromes from a file
 def getPalindromes(file):
 	palindromes = []
 
@@ -74,24 +78,67 @@ def getPalindromes(file):
 
 	return palindromes
 
-if (len(sys.argv)) != 7:
-	print("Incorrect number of arguments: Must provide 2 filenames and 4 integers (input_text, output_to_be_checked, min_length, max_length, max_gap, mismatches)")
+# Check correct number of arguments given
+if (len(sys.argv)) != 8:
+	print(
+"""Incorrect number of arguments. Must provide 7 arguments in order:
+1: original_input_file
+2: original_input_sequence
+3: output_to_be_checked
+4: min_length
+5: max_length
+6: max_gap
+7: mismatches"""
+	)
 	sys.exit(-1)
 
+# Store arguments
 filename_input = sys.argv[1]
-filename_output = sys.argv[2]
-min_length = int(sys.argv[3])
-max_length = int(sys.argv[4])
-max_gap = int(sys.argv[5])
-max_mismatches = int(sys.argv[6])
+seq_name = sys.argv[2]
+filename_output = sys.argv[3]
+min_length = int(sys.argv[4])
+max_length = int(sys.argv[5])
+max_gap = int(sys.argv[6])
+max_mismatches = int(sys.argv[7])
 
+# Extract and store list of palindromes
 file_output = open(filename_output, 'r')
 p = getPalindromes(file_output)
 file_output.close()
 
+# Extract contents of file and find sequence to be extracted
 with open (filename_input, "r") as file_input:
-    data = file_input.read().replace('\n', '')
+	content = file_input.readlines()
 
+data = ""
+
+i = 0;
+for line in content:
+	i+=1
+
+	if line[0] == '>':
+		name = line[1:].split()[0]
+
+		if name == seq_name:
+			break;
+
+if (i == len(content)):
+	print("Error: Sequence '" + seq_name +  "' not found in file.")
+	exit(-1)
+
+# Extract sequence data
+for line in content[i:]:
+	line = line.replace('\n', '')
+
+	if line == "" or line[0] == " " or line[0] == ";" or line[0] == ">":
+		break
+
+	data += line
+
+# Make sequence data lower case
+data = data.lower()
+
+# Check correctness of palindromes
 correct = 0
 incorrect = 0
 
@@ -107,11 +154,10 @@ for palindrome in p:
 	length = outer_right - inner_right + 1
 	error = ""
 
-
 	for i in range(0, outer_right - inner_right + 1):
 		if not checkMatch(data[outer_left + i], data[outer_right - i]):
 			mismatches += 1
-			
+
 			if mismatches > max_mismatches:
 				error = "TOO MANY MISMATCHES"
 				break
@@ -125,12 +171,10 @@ for palindrome in p:
 	if length < min_length:
 		error = "TOO SHORT"
 
-
 	if (error == ""):
 		correct += 1
 	else:
-		if (false):
-			print("BAD (" + error + "): " + "[" + str(outer_left + 1) + ", " + str(inner_left + 1) + "]-[" + str(inner_right + 1) + ", " + str(outer_right + 1) + "]")
+		print("BAD (" + error + "): " + "[" + str(outer_left + 1) + ", " + str(inner_left + 1) + "]-[" + str(inner_right + 1) + ", " + str(outer_right + 1) + "]")
 
 		bad_palindrome = ""
 		for i in range(outer_left, inner_left + 1):
@@ -154,13 +198,14 @@ for palindrome in p:
 
 		incorrect += 1
 
-print("Min Length: " + str(min_length))
-print("Max Length: " + str(max_length))
-print("Gap: " + str(max_gap))
-print("Mismatches: " + str(max_mismatches))
-print("File Input: " + filename_input)
-print("File Output: " + filename_output)
-print("")
-print("Total Palindromes: \t" + str(len(p)))
-print("Correct Palindromes: \t" + str(correct))
-print("Incorrect Palindromes: \t" + str(incorrect))
+# Output results of correctness checks
+print("file_input: " + filename_input)
+print("seq_name: " + seq_name)
+print("file_output: " + filename_output)
+print("min_len: " + str(min_length))
+print("max_len: " + str(max_length))
+print("gap: " + str(max_gap))
+print("mismatches: " + str(max_mismatches))
+print("total_palindromes: " + str(len(p)))
+print("correct_palindromes: " + str(correct))
+print("incorrect_palindromes: " + str(incorrect))

@@ -17,25 +17,25 @@ typedef map< char, set<char> > I_map;
 
 // Range Minimum Query (Type 1)
 static __inline INT rmq(INT *m, INT *v, INT n, INT i, INT j) {
-    INT lgn = flog2(n); 
+    INT lgn = flog2(n);
 
     if (i > j) {INT tmp = j; j = i; i = tmp;}
     i++;
     if (i == j) return i;
 
-    INT k = flog2(j-i+1); 
-    INT a = m[i * lgn + k]; 
+    INT k = flog2(j-i+1);
+    INT a = m[i * lgn + k];
     INT shift = ((( INT ) 1) << k);
-    INT b = m[(j - shift + 1) * lgn + k];  
+    INT b = m[(j - shift + 1) * lgn + k];
 
     return v[a]>v[b]?b:a;
 }
 
 // O(nlogn)-time preprocessing function for Type 1 Range Minimum Queries
-void rmq_preprocess(INT * m, INT * v, INT n) 
+void rmq_preprocess(INT * m, INT * v, INT n)
 {
     INT i, j;
-    INT lgn = flog2(n); 
+    INT lgn = flog2(n);
 
     for (i = 0; i < n; i++) {
         m[i*lgn] = i;
@@ -67,13 +67,14 @@ int exist(const char *name) {
 // Prints documentation on usage of IUPACpal arguments
 void usage() {
     fprintf ( stdout, "\n" );
-    fprintf ( stdout, "      PARAMETER       TYPE      DEFAULT         DESCRIPTION\n" );
-    fprintf ( stdout, "  -f, input_file      <str>     -               Input filename of plaintext DNA data (IUPAC).\n" );
-    fprintf ( stdout, "  -m, min_len         <int>     10              Minimum length.\n");
-    fprintf ( stdout, "  -M, max_len         <int>     100             Maximum length.\n");
-    fprintf ( stdout, "  -g, max_gap         <int>     100             Maximum permissible gap.\n");
-    fprintf ( stdout, "  -x, mismatches      <int>     0               Maximum permissible mismatches.\n");
-    fprintf ( stdout, "  -o, output_file     <str>     IUPACpal.out    Output filename.\n" );
+    fprintf ( stdout, "  FLAG  PARAMETER       TYPE      DEFAULT         DESCRIPTION\n" );
+    fprintf ( stdout, "  -f    input_file      <str>     input.fasta     Input filename (FASTA).\n" );
+    fprintf ( stdout, "  -s    seq_name        <str>     seq0            Input sequence name.\n");
+    fprintf ( stdout, "  -m    min_len         <int>     10              Minimum length.\n");
+    fprintf ( stdout, "  -M    max_len         <int>     100             Maximum length.\n");
+    fprintf ( stdout, "  -g    max_gap         <int>     100             Maximum permissible gap.\n");
+    fprintf ( stdout, "  -x    mismatches      <int>     0               Maximum permissible mismatches.\n");
+    fprintf ( stdout, "  -o    output_file     <str>     IUPACpal.out    Output filename.\n" );
     fprintf ( stdout, "\n" );
 }
 
@@ -201,7 +202,7 @@ int* MatchMatrix::IUPAC_to_value;
 // - Suffix Array
 // - Longest Common Prefix data structure (empty)
 unsigned int LCParray(unsigned char *text, INT n, INT * SA, INT * invSA, INT * LCP)
-{                                                                               
+{
     INT i = 0, j = 0;
     LCP[0] = 0;
 
@@ -320,7 +321,7 @@ void realLCE_mismatches(unsigned char* text, INT i, INT j, INT n, INT * invSA, I
     }
 }
 
-// Finds all inverted repeats (palindromes) with given parameters and adds them to an output set 
+// Finds all inverted repeats (palindromes) with given parameters and adds them to an output set
 //
 // INPUT:
 // - Data structure (set of integer 3-tuples) to store palindromes in form (left_index, right_index, gap)
@@ -486,7 +487,7 @@ void addPalindromes(set<tuple<int, int, int>>* palindromes, unsigned char* S, in
 
                 // Check that potential palindrome is not too short
 	            if ((right - left + 1 - gap) / 2 >= min_len) {
-                    // Check that potential palindrome is not too long
+                    // Check that potentialinput_file palindrome is not too long
                     if ((right - left + 1 - gap) / 2 <= max_len) {
                         // Palindrome is not too long, so add to output
                         palindromes->insert(tuple<int, int, int>(left, right, gap));
@@ -532,7 +533,8 @@ int main(int argc, char* argv[]) {
     ///////////////////////
 
     // Default parameters
-    string input_file = "";
+    string input_file = "input.fasta";
+    string seq_name = "seq0";
     int min_len = 10;
     int max_len = 100;
     int max_gap = 100;
@@ -541,12 +543,15 @@ int main(int argc, char* argv[]) {
 
     // Parse command line arguments
     int c;
-    while( ( c = getopt (argc, argv, "f:m:M:g:x:o:") ) != -1 ) 
+    while( ( c = getopt (argc, argv, "f:s:m:M:g:x:o:") ) != -1 )
     {
         switch(c)
         {
             case 'f':
                 if(optarg) input_file = optarg;
+                break;
+            case 's':
+                if(optarg) seq_name = optarg;
                 break;
             case 'm':
                 if(optarg) min_len = std::atoi(optarg);
@@ -565,47 +570,92 @@ int main(int argc, char* argv[]) {
                 break;
         }
     }
-
+;
     ///////////////////////
     //  VERIFY OPTIONS   //
     ///////////////////////
 
-    // Check input file exists
-    if (!exist(input_file.c_str())) {  usage(); cout << "Error: input_file not found" << endl; return -1; }
+    // Check input file exists, exit if it does not
+    if (!exist(input_file.c_str())) {  usage(); cout << "Error: File '" + input_file + "' not found." << endl; return -1; }
 
     // Read input file
-    ifstream in(input_file);
-    string contents((std::istreambuf_iterator<char>(in)), 
-    istreambuf_iterator<char>());
+    ifstream input( input_file );
+    string name = "";
+    string contents = "";
+    bool found_seq = false;
+
+    // Parse file line by line
+    for( string line; getline( input, line ); )
+    {
+        int line_length = line.length();
+
+        // Look for sequence name
+        if (found_seq == false) {
+            if (line_length > 0 && line[0] == '>') {
+                int i = 1;
+                while ( i < line_length && line[i] == ' ') {
+                    i++;
+                }
+                while ( i < line_length && line[i] != ' ' ) {
+                    name += line[i];
+                    i++;
+                }
+            }
+
+            // Sequence name found
+            if (name == seq_name) {
+                found_seq = true;
+            }
+
+            name = "";
+        }
+        // Once sequence name is found, extract sequence
+        else {
+            if (line[0] != ' ' && line[0] != '>' && line[0] != ';') {
+                contents += line;
+            }
+            else {
+                // End of sequence
+                break;
+            }
+        }
+    }
+
+    // Check if sequence name was found, exit if not
+    if (!found_seq) {  usage(); cout << "Error: Sequence '" + seq_name + "' not found in file '" + input_file + "'." << endl; return -1; }
+
     long int n = contents.length();
     unsigned char * seq = ( unsigned char* ) malloc( ( n ) * sizeof( unsigned char ) );
 
+    // Convert extracted sequence to character array, all lowercase
     for (int i = 0; i < n; ++i) {
         seq[i] = contents[i];
+        seq[i] = tolower(seq[i]);
     }
 
     // Verify arguments are valid with respect to individual limits
-    if (min_len < 2) { usage(); cout << "Error: min_len must not be less than 2" << endl; return -1; }
-    if (min_len > INT_MAX) { usage(); cout << "Error: min_len must not greater than " << INT_MAX << endl; return -1; }
-    if (max_len < 0) { usage(); cout << "Error: max_len must not be a negative value" << endl; return -1; }
-    if (max_len > INT_MAX) { usage(); cout << "Error: max_len must not greater than " << INT_MAX << endl; return -1; }
-    if (max_gap < 0) { usage(); cout << "Error: max_gap must not be a negative value" << endl; return -1; }
-    if (max_gap > INT_MAX) { usage(); cout << "Error: max_gap must not greater than " << INT_MAX << endl; return -1; }
-    if (mismatches < 0) { usage(); cout << "Error: mismatches must not be a negative value" << endl; return -1; }
-    if (mismatches > INT_MAX) { usage(); cout << "Error: mismatches must not greater than " << INT_MAX << endl; return -1; }
+    if (min_len < 2) { usage(); cout << "Error: min_len must not be less than 2." << endl; return -1; }
+    if (min_len > INT_MAX) { usage(); cout << "Error: min_len must not greater than " << INT_MAX << "." << endl; return -1; }
+    if (max_len < 0) { usage(); cout << "Error: max_len must not be a negative value." << endl; return -1; }
+    if (max_len > INT_MAX) { usage(); cout << "Error: max_len must not greater than " << INT_MAX << "." << endl; return -1; }
+    if (max_gap < 0) { usage(); cout << "Error: max_gap must not be a negative value." << endl; return -1; }
+    if (max_gap > INT_MAX) { usage(); cout << "Error: max_gap must not greater than " << INT_MAX << "." << endl; return -1; }
+    if (mismatches < 0) { usage(); cout << "Error: mismatches must not be a negative value." << endl; return -1; }
+    if (mismatches > INT_MAX) { usage(); cout << "Error: mismatches must not greater than " << INT_MAX << "." << endl; return -1; }
 
     // Verify arguments are valid with respect to each other
-    if (min_len >= n) { usage(); cout << "Error: min_len must be less than sequence length" << endl; return -1; }
-    if (max_len < min_len) { usage(); cout << "Error: max_len must not be less than min_len" << endl; return -1; }
-    if (max_gap >= n) { usage(); cout << "Error: max_gap must be less than sequence length" << endl; return -1; }
-    if (min_len >= n) { usage(); cout << "Error: min_len must be less than sequence length" << endl; return -1; }
-    if (mismatches >= n) { usage(); cout << "Error: mismatches must be less than sequence length" << endl; return -1; }
-    if (mismatches >= min_len) { usage(); cout << "Error: mismatches must be less than min_len" << endl; return -1; }
-    
+    if (min_len >= n) { usage(); cout << "Error: min_len must be less than sequence length." << endl; return -1; }
+    if (max_len < min_len) { usage(); cout << "Error: max_len must not be less than min_len." << endl; return -1; }
+    if (max_gap >= n) { usage(); cout << "Error: max_gap must be less than sequence length." << endl; return -1; }
+    if (min_len >= n) { usage(); cout << "Error: min_len must be less than sequence length." << endl; return -1; }
+    if (mismatches >= n) { usage(); cout << "Error: mismatches must be less than sequence length." << endl; return -1; }
+    if (mismatches >= min_len) { usage(); cout << "Error: mismatches must be less than min_len." << endl; return -1; }
+
     // Optionally display user given options
     if (true) {
     	cout << endl;
         cout << "input_file: " << input_file << endl;
+        cout << "seq_name: " << seq_name << endl;
 
         // Optionally print sequence data
         if (false) {
@@ -637,6 +687,7 @@ int main(int argc, char* argv[]) {
 
     // Build IUPAC_map and IUPAC_to_value
     // Note: 'u' and 't' are considered identical
+    // Note: 'n' and '*' and '-' are considered identical
     IUPAC_map_insert(&IUPAC_map, IUPAC_to_value, 'a', {'a'});
     IUPAC_map_insert(&IUPAC_map, IUPAC_to_value, 'c', {'c'});
     IUPAC_map_insert(&IUPAC_map, IUPAC_to_value, 'g', {'g'});
@@ -653,6 +704,8 @@ int main(int argc, char* argv[]) {
     IUPAC_map_insert(&IUPAC_map, IUPAC_to_value, 'h', {'a', 'c', 't'});
     IUPAC_map_insert(&IUPAC_map, IUPAC_to_value, 'v', {'a', 'c', 'g'});
     IUPAC_map_insert(&IUPAC_map, IUPAC_to_value, 'n', {'a', 'c', 'g', 't'});
+    IUPAC_map_insert(&IUPAC_map, IUPAC_to_value, '*', {'a', 'c', 'g', 't'});
+    IUPAC_map_insert(&IUPAC_map, IUPAC_to_value, '-', {'a', 'c', 'g', 't'});
 
     // Non-IUPAC characters $ and # will be used within suffix tree
     IUPAC_map_insert(&IUPAC_map, IUPAC_to_value, '$', {'$'});
@@ -716,7 +769,7 @@ int main(int argc, char* argv[]) {
 
     // Optionally print match matrix
     #ifdef _DIAGNOSTICS
-        string letters = "acgturyswkmbdhvn$#";
+        string letters = "acgturyswkmbdhvn*-$#";
 
         cout << "Match Matrix:" << endl;
 
@@ -754,6 +807,8 @@ int main(int argc, char* argv[]) {
     complement['h'] = 'd';
     complement['v'] = 'b';
     complement['n'] = 'n';
+    complement['*'] = 'n';
+    complement['-'] = 'n';
 
     //////////////////////////////////////////////////////////////
     //  CONSTRUCT S = seq + '$' + complement(reverse(seq) + '#' //
@@ -890,7 +945,8 @@ int main(int argc, char* argv[]) {
     ofstream file;
     file.open(output_file);
 
-    file << "Palindromes of:  " << input_file << endl;
+    file << "Palindromes of: " << input_file << endl;
+    file << "Sequence name: " << seq_name << endl;
     file << "Sequence length is: " << n << endl;
     file << "Start at position: " << 1 << endl;
     file << "End at position: " << n << endl;
@@ -917,7 +973,7 @@ int main(int argc, char* argv[]) {
             if (prev_left != left) {
             	it = prev(it_left_to_right);
             	while (it != prev(palindromes.begin()) and get<0>(*it) == prev_left) {
-            		
+
             		int left = get<0>(*it);
 		            int right = get<1>(*it);
 		            int gap = get<2>(*it);
@@ -942,7 +998,7 @@ int main(int argc, char* argv[]) {
 		            for (int i = 0; i < (inner_left - outer_left + 1); ++i) {
 		                file << ( (MatchMatrix::match(seq[ outer_left - 1 + i ], complement[ seq[ outer_right - 1 - i ] ])) ? "|" : " " );
 		            }
-		            
+
 		            file << "\n";
 
 		            file << outer_right;
@@ -965,6 +1021,14 @@ int main(int argc, char* argv[]) {
     file << endl << endl << endl;
 
     file.close();
+
+    cout << "Search complete!" << endl;
+
+    free(match_matrix);
+    free(seq);
+    free(SA);
+    free(invSA);
+    free(LCP);
 
     return 0;
 }
