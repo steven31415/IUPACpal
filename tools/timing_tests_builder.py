@@ -1,14 +1,14 @@
 input_file_array = ["test_data/rand1000.fasta",
-					"test_data/rand10000.fasta"
-					"test_data/rand100000.fasta"
-					"test_data/rand1000000.fasta"
+					"test_data/rand10000.fasta",
+					"test_data/rand100000.fasta",
+					"test_data/rand1000000.fasta",
 					"test_data/randIUPAC1000.fasta",
-					"test_data/randIUPAC10000.fasta"
-					"test_data/randIUPAC100000.fasta"
-					"test_data/randIUPAC1000000.fasta"
+					"test_data/randIUPAC10000.fasta",
+					"test_data/randIUPAC100000.fasta",
+					"test_data/randIUPAC1000000.fasta",
 					"test_data/randrandIUPAC_N1000.fasta",
-					"test_data/randrandIUPAC_N10000.fasta"
-					"test_data/randrandIUPAC_N100000.fasta"
+					"test_data/randrandIUPAC_N10000.fasta",
+					"test_data/randrandIUPAC_N100000.fasta",
 					"test_data/randrandIUPAC_N1000000.fasta"]
 seq_name_array = ["seq0"]
 min_len_array = [10]
