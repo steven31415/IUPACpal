@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 start_measuring_time() {
   read s1 s2 < <(date +'%s %N')
 }
@@ -14,100 +13,96 @@ get_elapsed_time() {
   result=$TIME_TAKEN
 }
 
-if [ $# -ne 1 ]; then 
-  echo "Must provide a single filename as test configuration"
-  exit -1
-fi
-
 today=`date +%Y-%m-%d.%H:%M:%S`
-printf "test_no\tsoftware\tfile\tmin_length\tmax_length\tmax_gap\tmismatches\ttotal_pals\tshared_pals\tunique_pals\tcorrect_pals\tincorrect_pals\truntime\n" > "test_results_$today.csv"
+printf "test_no\tfile\tseq_name\tmin_length\tmax_length\tmax_gap\tmismatches\tIUPAC_total_pals\tIUPAC_unique_pals\tIUPAC_correct_pals\tIUPAC_incorrect_pals\temboss_total_pals\temboss_unique_pals\temboss_correct_pals\temboss_incorrect_pals\tshared_pals\tIUPAC_runtime\temboss_runtime\n" > "test_results_$today.csv"
 
-FILENAME="$1"
+mkdir temp
+FILENAME="timing_tests.cfg"
 TEST_COUNT=1
+
 while read -r LINE
 do
-  if [[ $LINE == "f_emboss "* ]]; then
-	f_emboss=${LINE:9}
+  if [[ $LINE == "file "* ]]; then
+  input_file=${LINE:5}
   fi
 
-  if [[ $LINE == "f_IUPACpal "* ]]; then
-	f_IUPACpal=${LINE:11}
+  if [[ $LINE == "s "* ]]; then
+  s=${LINE:2}
   fi
 
   if [[ $LINE == "m "* ]]; then
-	m=${LINE:1}
+  m=${LINE:2}
   fi
 
   if [[ $LINE == "M "* ]]; then
-	M=${LINE:1}
+  M=${LINE:2}
   fi
 
   if [[ $LINE == "g "* ]]; then
-	g=${LINE:1}
+  g=${LINE:2}
   fi
 
   if [[ $LINE == "x "* ]]; then
-	x=${LINE:1}
+  x=${LINE:2}
   fi
 
   if [[ $LINE == "" ]]; then
-	echo "Running test $TEST_COUNT"
+    echo "RUNNING TEST NO: $TEST_COUNT"
+
+    start_measuring_time
+    ./IUPACpal -f $input_file -s $s -m $m -M $M -g $g -x $x -o temp/IUPACpal.out &> /dev/null
+    stop_measuring_time
+    get_elapsed_time
+    IUPACPAL_TIME_TAKEN=$result
+    echo "IUPACpal:              $IUPACPAL_TIME_TAKEN seconds"
 
 
-	start_measuring_time
-	./IUPACpal -f $f_IUPACpal -m $m -M $M -g $g -x $x &> /dev/null
-	stop_measuring_time
-	get_elapsed_time
-  IUPACPAL_TIME_TAKEN=$result
-  echo "IUPACpal:              $IUPACPAL_TIME_TAKEN seconds"
+    start_measuring_time
+    ./emboss_palindrome $input_file -minpallen $m -maxpallen $M -gaplimit $g -nummismatches $x -outfile temp/emboss_palindrome.out -overlap &> /dev/null
+    stop_measuring_time
+    get_elapsed_time
+    EMBOSS_TIME_TAKEN=$result
+    echo "emboss:                $EMBOSS_TIME_TAKEN seconds"
 
 
-  start_measuring_time
-  ./emboss_palindrome $f_emboss -minpallen $m -maxpallen $M -gaplimit $g -nummismatches $x -outfile emboss_palindrome.out -overlap &> /dev/null
-  stop_measuring_time
-  get_elapsed_time
-  EMBOSS_TIME_TAKEN=$result
-  echo "emboss:                $EMBOSS_TIME_TAKEN seconds"
-	
+    python tools/compare_output.py temp/IUPACpal.out temp/emboss_palindrome.out > temp/compare.out
+    TOTAL_IN_IUPACPAL=$(awk '{print $2}' temp/compare.out | sed -n '3p')
+    TOTAL_IN_EMBOSS=$(awk '{print $2}' temp/compare.out | sed -n '4p')
+    IN_BOTH=$(awk '{print $2}' temp/compare.out | sed -n '5p')
+    ONLY_IN_IUPACPAL=$(awk '{print $2}' temp/compare.out | sed -n '6p')
+    ONLY_IN_EMBOSS=$(awk '{print $2}' temp/compare.out | sed -n '7p')
 
-  python tools/compare_output.py IUPACpal.out emboss_palindrome.out > compare.out
-  TOTAL_IN_IUPACPAL=$(awk '{print $2}' compare.out | sed -n '4p')
-  TOTAL_IN_EMBOSS=$(awk '{print $2}' compare.out | sed -n '5p')
-  IN_BOTH=$(awk '{print $2}' compare.out | sed -n '7p')
-  ONLY_IN_IUPACPAL=$(awk '{print $2}' compare.out | sed -n '8p')
-  ONLY_IN_EMBOSS=$(awk '{print $2}' compare.out | sed -n '9p')
-
-  echo "Pals in IUPACpal:      $TOTAL_IN_IUPACPAL"
-  echo "Pals in emboss:        $TOTAL_IN_EMBOSS"
-  echo "Pals in both:          $IN_BOTH"
-  echo "Only in IUPACpal:      $ONLY_IN_IUPACPAL"
-  echo "Only in emboss:        $ONLY_IN_EMBOSS"
+    echo "Pals in IUPACpal:      $TOTAL_IN_IUPACPAL"
+    echo "Pals in emboss:        $TOTAL_IN_EMBOSS"
+    echo "Pals in both:          $IN_BOTH"
+    echo "Only in IUPACpal:      $ONLY_IN_IUPACPAL"
+    echo "Only in emboss:        $ONLY_IN_EMBOSS"
 
 
-  python tools/check_correctness.py $f_IUPACpal IUPACpal.out $x > correctness.out
-  IUPACPAL_CORRECT_PALS=$(awk '{print $3}' correctness.out | sed -n '6p')
-  IUPACPAL_INCORRECT_PALS=$(awk '{print $3}' correctness.out | sed -n '7p')
-  echo "Correct in IUPACpal:   $IUPACPAL_CORRECT_PALS"
-  echo "Incorrect in IUPACpal: $IUPACPAL_INCORRECT_PALS"
+    python tools/check_correctness.py $input_file $s temp/IUPACpal.out $m $M $g $x > temp/IUPAC_correctness.out
+    IUPACPAL_CORRECT_PALS=$(awk '{print $2}' temp/IUPAC_correctness.out | sed -n '9p')
+    IUPACPAL_INCORRECT_PALS=$(awk '{print $2}' temp/IUPAC_correctness.out | sed -n '10p')
+    echo "Correct in IUPACpal:   $IUPACPAL_CORRECT_PALS"
+    echo "Incorrect in IUPACpal: $IUPACPAL_INCORRECT_PALS"
 
-  #this correctness check assumes that f_IUPACpal and f_emboss represent that same data (albeit in different formats)
-  python tools/check_correctness.py $f_IUPACpal emboss_palindrome.out $x > correctness.out
-  EMBOSS_CORRECT_PALS=$(awk '{print $3}' correctness.out | sed -n '6p')
-  EMBOSS_INCORRECT_PALS=$(awk '{print $3}' correctness.out | sed -n '7p')
-  echo "Correct in emboss:     $EMBOSS_CORRECT_PALS"
-  echo "Incorrect in emboss:   $EMBOSS_INCORRECT_PALS"
+    #this correctness check assumes that f_IUPACpal and f_emboss represent that same data (albeit in different formats)
+    python tools/check_correctness.py $input_file $s temp/emboss_palindrome.out $m $M $g $x > temp/emboss_correctness.out
+    EMBOSS_CORRECT_PALS=$(awk '{print $2}' temp/emboss_correctness.out | sed -n '9p')
+    EMBOSS_INCORRECT_PALS=$(awk '{print $2}' temp/emboss_correctness.out | sed -n '10p')
+    echo "Correct in emboss:     $EMBOSS_CORRECT_PALS"
+    echo "Incorrect in emboss:   $EMBOSS_INCORRECT_PALS"
 
 
-  echo "Test $TEST_COUNT complete"
+    echo "Test $TEST_COUNT complete"
 
-  printf "$TEST_COUNT\tIUPACpal\t$f_IUPACpal\t$m\t$M\t$g\t$x\t$TOTAL_IN_IUPACPAL\t$IN_BOTH\t$ONLY_IN_IUPACPAL\t$IUPACPAL_CORRECT_PALS\t$IUPACPAL_INCORRECT_PALS\t$IUPACPAL_TIME_TAKEN\n" >> "test_results_$today.csv"
-  printf "$TEST_COUNT\temboss\t$f_emboss\t$m\t$M\t$g\t$x\t$TOTAL_IN_EMBOSS\t$IN_BOTH\t$ONLY_IN_EMBOSS\t$EMBOSS_CORRECT_PALS\t$EMBOSS_INCORRECT_PALS\t$EMBOSS_TIME_TAKEN\n" >> "test_results_$today.csv"
+    printf "$TEST_COUNT\t$input_file\t$s\t$m\t$M\t$g\t$x\t$TOTAL_IN_IUPACPAL\t$ONLY_IN_IUPACPAL\t$IUPACPAL_CORRECT_PALS\t$IUPACPAL_INCORRECT_PALS\t$TOTAL_IN_EMBOSS\t$ONLY_IN_EMBOSS\t$EMBOSS_CORRECT_PALS\t$EMBOSS_INCORRECT_PALS\t$IN_BOTH\t$IUPACPAL_TIME_TAKEN\t$EMBOSS_TIME_TAKEN\n" >> "test_results_$today.csv"
 
-  echo
-	echo
-	TEST_COUNT=$((TEST_COUNT+1))
+    echo
+    TEST_COUNT=$((TEST_COUNT+1))
   fi
 done < "$FILENAME"
+
+rm -rf temp
 
 echo "All tests completed!"
 
