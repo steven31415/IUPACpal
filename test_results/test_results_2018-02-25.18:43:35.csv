@@ -1,0 +1,7 @@
+test_no	file	seq_name	min_length	max_length	max_gap	mismatches	IUPAC_total_pals	IUPAC_unique_pals	IUPAC_correct_pals	IUPAC_incorrect_pals	emboss_total_pals	emboss_unique_pals	emboss_correct_pals	emboss_incorrect_pals	shared_pals	IUPAC_runtime	emboss_runtime
+1	test_data/rand1000000.fasta	seq0	10	100	100	0	65	0	65	0	65	0	65	0	65	8.982	5.201
+2	test_data/rand1000000.fasta	seq0	10	100	100	1	1868	0	1868	0	1868	0	1868	0	1868	8.973	6.125
+3	test_data/rand1000000.fasta	seq0	10	100	100	2	21332	2	21332	0	21330	0	21330	0	21330	9.223	8.234
+4	test_data/rand1000000.fasta	seq0	10	100	100	3	141819	240	141819	0	141579	0	141579	0	141579	10.467	37.795
+5	test_data/rand1000000.fasta	seq0	10	100	100	4	622683	5569	622683	0	617114	0	617114	0	617114	14.606	638.309
+6	test_data/rand1000000.fasta	seq0	10	100	100	5	1886457	65492	1886457	0	1820965	0	1820965	0	1820965	22.236	5737.402

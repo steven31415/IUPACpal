@@ -6,14 +6,14 @@ input_file_array = ["test_data/rand1000.fasta",
 					"test_data/randIUPAC10000.fasta",
 					"test_data/randIUPAC100000.fasta",
 					"test_data/randIUPAC1000000.fasta",
-					"test_data/randrandIUPAC_N1000.fasta",
-					"test_data/randrandIUPAC_N10000.fasta",
-					"test_data/randrandIUPAC_N100000.fasta",
-					"test_data/randrandIUPAC_N1000000.fasta"]
+					"test_data/randIUPAC_N1000.fasta",
+					"test_data/randIUPAC_N10000.fasta",
+					"test_data/randIUPAC_N100000.fasta",
+					"test_data/randIUPAC_N1000000.fasta"]
 seq_name_array = ["seq0"]
 min_len_array = [10]
 max_len_array = [100]
-max_gap_array = range(0, 1001, 100)
+max_gap_array = [100]
 mismatches_array = range(0, 10)
 
 output_file = open("timing_tests.cfg", "w")
