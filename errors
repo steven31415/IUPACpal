@@ -1,0 +1,2 @@
+Used: Makefile.64-bit.rmq1.diagnostics.gcc
+Command: ./IUPACpal -f test_data/test1.fasta -s MCHU
