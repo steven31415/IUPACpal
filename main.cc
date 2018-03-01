@@ -767,29 +767,6 @@ int main(int argc, char* argv[]) {
     MatchMatrix::IUPAC_map_count = IUPAC_map_count;
     MatchMatrix::IUPAC_to_value = IUPAC_to_value;
 
-    // Optionally print match matrix
-    #ifdef _DIAGNOSTICS
-        string letters = "acgturyswkmbdhvn*-$#";
-
-        cout << "Match Matrix:" << endl;
-
-        cout << "  ";
-        for (int i = 0; i < IUPAC_map_count; ++i) {
-            cout << letters[i] << " ";
-        }
-        cout << endl;
-
-        for (int i = 0; i < IUPAC_map_count; ++i) {
-            cout << letters[i] << " ";
-            for (int j = 0; j < IUPAC_map_count; ++j) {
-                cout << MatchMatrix::match(letters[i], letters[j]) << " ";
-            }
-            cout << endl;
-        }
-
-        cout << endl << endl;
-    #endif
-
     // Build complement array
     complement['a'] = 't';
     complement['c'] = 'g';
@@ -809,6 +786,29 @@ int main(int argc, char* argv[]) {
     complement['n'] = 'n';
     complement['*'] = 'n';
     complement['-'] = 'n';
+
+    // Optionally print match matrix
+    #ifdef _DIAGNOSTICS
+        string letters = "acgturyswkmbdhvn*-$#";
+
+        cout << "Match Matrix:" << endl;
+
+        cout << "  ";
+        for (int i = 0; i < IUPAC_map_count; ++i) {
+            cout << letters[i] << " ";
+        }
+        cout << endl;
+
+        for (int i = 0; i < IUPAC_map_count; ++i) {
+            cout << letters[i] << " ";
+            for (int j = 0; j < IUPAC_map_count; ++j) {
+                cout << MatchMatrix::match(letters[i], complement[letters[j]]) << " ";
+            }
+            cout << endl;
+        }
+
+        cout << endl << endl;
+    #endif
 
     //////////////////////////////////////////////////////////////
     //  CONSTRUCT S = seq + '$' + complement(reverse(seq) + '#' //
