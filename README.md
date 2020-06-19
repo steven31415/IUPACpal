@@ -6,17 +6,17 @@ IUPACpal is an exact tool for efficient identification of inverted repeats in IU
 
 ## Project Structure
 
-sdsl-lite - Succinct Data Structure Library (unzipped)
-test_data - Test data that may be used as input for IUPACpal
-test_results
-tools
-Makefile.gcc - Makefile for compiling the project
-README.md - This file
-main.cc - IUPACpal main code
-main.h - IUPACpal header code
-pre-install.sh - Pre-installation script
-sdsl-lite.tar.gz - Succinct Data Structure Library (zipped)
-timing_tests.sh
+- sdsl-lite   Succinct Data Structure Library (unzipped)
+- test_data   Test data that may be used as input for IUPACpal
+- test_results
+- tools
+- Makefile.gcc   Makefile for compiling the project
+- README.md   This file
+- main.cc   IUPACpal main code
+- main.h   IUPACpal header code
+- pre-install.sh   Pre-installation script
+- sdsl-lite.tar.gz   Succinct Data Structure Library (zipped)
+- timing_tests.sh
 
 ## Getting Started
 
