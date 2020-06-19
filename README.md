@@ -8,17 +8,17 @@ IUPACpal is an exact tool for efficient identification of inverted repeats in IU
 
 | FILE / FOLDER | PURPOSE |
 | :--- | :--- |
-| **sdsl-lite** | Succinct Data Structure Library (unzipped folder)
-| **test_data** | Folder containing test data that may be used as input for IUPACpal
-| **test_results** | Folder containing results from test runs
-| **tools** | Folder containg various Python tools for testing purposes
-| **Makefile.gcc** | Makefile for compiling the project
-| **README.md** | This file
-| **main.cc** | IUPACpal main code
-| **main.h** | IUPACpal header code
-| **pre-install.sh** | Pre-installation script
-| **sdsl-lite.tar.gz** | Succinct Data Structure Library (zipped folder)
-| **timing_tests.sh** | Execute timing tests (requires timing_tests.cfg)
+| `sdsl-lite` | Succinct Data Structure Library (unzipped folder)
+| `test_data` | Folder containing test data that may be used as input for IUPACpal
+| `test_results` | Folder containing results from test runs
+| `tools` | Folder containg various Python tools for testing purposes
+| `Makefile.gcc` | Makefile for compiling the project
+| `README.md` | This file
+| `main.cc` | IUPACpal main code
+| `main.h` | IUPACpal header code
+| `pre-install.sh` | Pre-installation script
+| `sdsl-lite.tar.gz` | Succinct Data Structure Library (zipped folder)
+| `timing_tests.sh` | Execute timing tests (requires timing_tests.cfg)
 
 ## Getting Started
 
@@ -50,13 +50,13 @@ The IUPACpal software may then be compiled:
 $ make -f Makefile.gcc
 ```
 
-This will compile the program for 64-bit integers using the recommended type of Range Minimum Queries (**rmq1**). This requires double the amount of memory as 32-bit integers.
+This will compile the program for 64-bit integers using the recommended type of Range Minimum Queries (`rmq1`). This requires double the amount of memory as 32-bit integers.
 
-There are alternative makefiles available in the **Makefiles** folder, which provide an alternative implementation of Range Minimum Queries (**rmq2**) and a choice between 32-bit and 64-bit integers .
+There are alternative makefiles available in the `Makefiles` folder, which provide an alternative implementation of Range Minimum Queries (`rmq2`) and a choice between 32-bit and 64-bit integers .
 
 ## Running IUPACpal
 
-After compilation the binary file **IUPACpal** will be created in the working
+After compilation the binary file `IUPACpal` will be created in the working
 directory, you may run it within this directory via the command:
 
 ```
@@ -83,12 +83,12 @@ $ ./IUPACpal
 
 ### Examples
 
-Run on the input file **test_data/d00596.fasta** with default parameters:
+Run on the input file `test_data/d00596.fasta` with default parameters:
 ```
 ./IUPACpal -f test_data/d00596.fasta
 ```
 
-Run on the input file **test_data/test2.fasta** with parameters:
+Run on the input file `test_data/test2.fasta` with parameters:
 - sequence name in fasta file: seq2
 - Maximum permissible gap: 3
 - Minimum length: 5
@@ -97,7 +97,7 @@ Run on the input file **test_data/test2.fasta** with parameters:
 ./IUPACpal -f test_data/test2.fasta -s seq2 -g 3 -m 5
 ```
 
-Run on the input file **test_data/rand1000000.fasta** with parameters:
+Run on the input file `test_data/rand1000000.fasta` with parameters:
 - Minimum length: 20
 - Maximum length: 25
 - Maximum permissible gap: 8
@@ -109,25 +109,25 @@ Run on the input file **test_data/rand1000000.fasta** with parameters:
 
 ## Testing
 
-Automated testing can be performed through the use of **timing_tests.sh** and a configuration file **timing_tests.cfg**.
+Automated testing can be performed through the use of `timing_tests.sh` and a configuration file `timing_tests.cfg`.
 
-To run the default series of test on IUPACpal, first create the **timing_tests.cfg** file by running:
+To run the default series of test on IUPACpal, first create the `timing_tests.cfg` file by running:
 
 ```
 python tools/timing_tests_builder.py
 ```
 
-This creates the default **timing_tests.cfg**. Testing of IUPACpal can the be performed by running:
+This creates the default `timing_tests.cfg`. Testing of IUPACpal can the be performed by running:
 
 ```
 ./timing_tests.sh
 ```
 
-Ensure `timing_tests.sh` and **timing_tests.cfg** are in the same directory. To modify the test parameters, you can either directly modify **timing_tests.cfg** or alternatively modify the Python script **tools/timing_tests_builder.py** to enable the script to build a different set of tests over the desired range of parameters.
+Ensure `timing_tests.sh` and `timing_tests.cfg` are in the same directory. To modify the test parameters, you can either directly modify `timing_tests.cfg` or alternatively modify the Python script `tools/timing_tests_builder.py` to enable the script to build a different set of tests over the desired range of parameters.
 
 ## Author
 
-**Steven Watts** - [steven31415](https://github.com/steven31415)
+`Steven Watts` - [steven31415](https://github.com/steven31415)
 
 ## License
 
