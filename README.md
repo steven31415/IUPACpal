@@ -5,8 +5,9 @@ An inverted repeat is a DNA sequence followed downstream by its reverse compleme
 IUPACpal is an exact tool for efficient identification of inverted repeats in IUPAC-encoded DNA sequences allowing also for potential mismatches and gaps.
 
 ## Project Structure
+
 | File/Folder | Purpose |
-| ;--- | :--- |
+| :--- | :--- |
 | **sdsl-lite** | Succinct Data Structure Library (unzipped)
 | **test_data** | Test data that may be used as input for IUPACpal
 | **test_results** | TODOTOESF
@@ -70,26 +71,25 @@ $ ./IUPACpal
 
 ## Input Parameters
 
- | FLAG | PARAMETER | TYPE | DEFAULT | DESCRIPTION |
- | :--- | :--- | :--- | :--- | :--- |
- | -f | input_file | string | input.fasta | Input filename (FASTA). |
- | -s | seq_name | string | seq0 | Input sequence name. |
- | -m | min_len | integer | 10 | Minimum length. |
- | -M | max_len | integer | 100 | Maximum length. |
- | -g | max_gap | integer | 100 | Maximum permissible gap. |
- | -x | mismatches | integer | 0 | Maximum permissible mismatches. |
- | -o | output_file| string | IUPACpal.out | Output filename. |
+| FLAG | PARAMETER | TYPE | DEFAULT | DESCRIPTION |
+| :--- | :--- | :--- | :--- | :--- |
+| -f | input_file | string | input.fasta | Input filename (FASTA). |
+| -s | seq_name | string | seq0 | Input sequence name. |
+| -m | min_len | integer | 10 | Minimum length. |
+| -M | max_len | integer | 100 | Maximum length. |
+| -g | max_gap | integer | 100 | Maximum permissible gap. |
+| -x | mismatches | integer | 0 | Maximum permissible mismatches. |
+| -o | output_file| string | IUPACpal.out | Output filename. |
 
 ### Examples
 
-Run on the input file **test_data/d00596.fasta** with parameters:
-- default
+Run on the input file **test_data/d00596.fasta** with default parameters:
 ```
 ./IUPACpal -f test_data/d00596.fasta
 ```
 
 Run on the input file **test_data/test2.fasta** with parameters:
-sequence name in fasta file: seq2
+- sequence name in fasta file: seq2
 - Maximum permissible gap: 3
 - Minimum length: 5
 - all other parameters default
