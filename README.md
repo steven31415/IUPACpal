@@ -35,7 +35,7 @@ To run IUPACpal requires the pre-installation of the following:
 
 The necessary files for libdivsufsort and sdsl are already include in this repository.
 
-### Installing
+### Installation
 
 Pre-installation of the above tools and libraries may be easily completed by running the following commands on a Ubuntu system within the project directory:
 
