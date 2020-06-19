@@ -8,6 +8,7 @@ IUPACpal is an exact tool for efficient identification of inverted repeats in IU
 
 | FILE / FOLDER | PURPOSE |
 | :--- | :--- |
+| `Makefiles` | Folder of Makefiles enabling alternative compilation parameters
 | `sdsl-lite` | Succinct Data Structure Library (unzipped folder)
 | `test_data` | Folder containing test data that may be used as input for IUPACpal
 | `test_results` | Folder containing results from test runs
