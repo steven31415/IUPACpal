@@ -90,7 +90,7 @@ $ ./IUPACpal
 
 Run on the input file `test_data/d00596.fasta` with default parameters:
 ```
-./IUPACpal -f test_data/d00596.fasta
+$ ./IUPACpal -f test_data/d00596.fasta
 ```
 
 Run on the input file `test_data/test2.fasta` with parameters:
@@ -99,7 +99,7 @@ Run on the input file `test_data/test2.fasta` with parameters:
 - Minimum length: 5
 - all other parameters default
 ```
-./IUPACpal -f test_data/test2.fasta -s seq2 -g 3 -m 5
+$ ./IUPACpal -f test_data/test2.fasta -s seq2 -g 3 -m 5
 ```
 
 Run on the input file `test_data/rand1000000.fasta` with parameters:
@@ -109,7 +109,7 @@ Run on the input file `test_data/rand1000000.fasta` with parameters:
 - Maximum permissible mismatches: 5
 - Output filename: output.txt
 ```
-./IUPACpal -f test_data/rand1000000.fasta -s seq0 -m 20 -M 25 -g 8 -x 5 -o output.txt
+$ ./IUPACpal -f test_data/rand1000000.fasta -s seq0 -m 20 -M 25 -g 8 -x 5 -o output.txt
 ```
 
 ## Testing
@@ -119,13 +119,13 @@ Automated testing can be performed through the use of `timing_tests.sh` and a co
 To run the default series of test on IUPACpal, first create the `timing_tests.cfg` file by running:
 
 ```
-python3 tools/timing_tests_builder.py
+$ python3 tools/timing_tests_builder.py
 ```
 
 This creates the default configruation file `timing_tests.cfg`. Testing of IUPACpal can then be performed by running:
 
 ```
-./timing_tests.sh
+$ ./timing_tests.sh
 ```
 
 Ensure `timing_tests.sh` and `timing_tests.cfg` are in the same directory. To modify the test parameters, you can either directly modify `timing_tests.cfg` or alternatively modify the Python script `tools/timing_tests_builder.py` to enable the script to build a different set of tests over the desired range of input parameters.
