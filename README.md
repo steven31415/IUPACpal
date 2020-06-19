@@ -6,7 +6,7 @@ IUPACpal is an exact tool for efficient identification of inverted repeats in IU
 
 ## Project Structure
 
-| FILE/FOLDER | PURPOSE |
+| FILE / FOLDER | PURPOSE |
 | :--- | :--- |
 | **sdsl-lite** | Succinct Data Structure Library (unzipped folder)
 | **test_data** | Folder containing test data that may be used as input for IUPACpal
@@ -123,11 +123,11 @@ This creates the default **timing_tests.cfg**. Testing of IUPACpal can the be pe
 ./timing_tests.sh
 ```
 
-Ensure **timing_tests.sh** and **timing_tests.cfg** are in the same directory. To modify the test parameters, you can either directly modify **timing_tests.cfg** or alternatively modify the Python script **tools/timing_tests_builder.py** to enable the script to build a different set of tests over the desired range of parameters.
+Ensure `timing_tests.sh` and **timing_tests.cfg** are in the same directory. To modify the test parameters, you can either directly modify **timing_tests.cfg** or alternatively modify the Python script **tools/timing_tests_builder.py** to enable the script to build a different set of tests over the desired range of parameters.
 
-## Authors
+## Author
 
-* **Steven Watts** - [steven31415](https://github.com/steven31415)
+**Steven Watts** - [steven31415](https://github.com/steven31415)
 
 ## License
 
