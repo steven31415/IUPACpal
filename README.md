@@ -27,11 +27,14 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-To run IUPACpal requires the pre-installation of the following:
+To run IUPACpal requires the pre-installation of:
 - cmake
 - C++ compiler
 - libdivsufsort (https://github.com/y-256/libdivsufsort)
 - sdsl (https://github.com/simongog/sdsl-lite)
+
+To build testing configuration files requires pre-installation of:
+- Python (https://www.python.org/)
 
 The necessary files for libdivsufsort and sdsl are already include in this repository.
 
@@ -42,6 +45,7 @@ Pre-installation of the above tools and libraries may be easily completed by run
 ```
 $ sudo apt-get install cmake
 $ sudo apt-get install gcc
+$ sudo apt-get install python3
 $ sudo ./pre-install.sh
 ```
 
@@ -115,7 +119,7 @@ Automated testing can be performed through the use of `timing_tests.sh` and a co
 To run the default series of test on IUPACpal, first create the `timing_tests.cfg` file by running:
 
 ```
-python tools/timing_tests_builder.py
+python3 tools/timing_tests_builder.py
 ```
 
 This creates the default configruation file `timing_tests.cfg`. Testing of IUPACpal can then be performed by running:
@@ -126,7 +130,7 @@ This creates the default configruation file `timing_tests.cfg`. Testing of IUPAC
 
 Ensure `timing_tests.sh` and `timing_tests.cfg` are in the same directory. To modify the test parameters, you can either directly modify `timing_tests.cfg` or alternatively modify the Python script `tools/timing_tests_builder.py` to enable the script to build a different set of tests over the desired range of input parameters.
 
-Test results are written to an output file `test_results_<CURRENT_DATE_AND_TIME>.csv`
+Test results are written to an output file `test_results_<CURRENT_DATE_AND_TIME>.csv`.
 
 ## Author
 
