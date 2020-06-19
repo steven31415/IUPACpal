@@ -2,7 +2,7 @@
 
 An inverted repeat is a DNA sequence followed downstream by its reverse complement, potentially with a gap in the centre. 
 
-IUPACpal is an exact tool for efficient identification of inverted repeats in IUPAC-encoded DNA sequences allowing also for potential mismatches and gaps.
+IUPACpal is an exact tool for efficient identification of inverted repeats in IUPAC-encoded DNA sequences as substrings of a large text, allowing also for potential mismatches and gaps.
 
 ## Project Structure
 
