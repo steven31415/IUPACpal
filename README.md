@@ -69,46 +69,47 @@ $ ./IUPACpal
 
 ## Input Parameters
 
-  FLAG  PARAMETER       TYPE      DEFAULT         DESCRIPTION
-  -f    input_file      <str>     input.fasta     Input filename (FASTA).
-  -s    seq_name        <str>     seq0            Input sequence name.
-  -m    min_len         <int>     10              Minimum length.
-  -M    max_len         <int>     100             Maximum length.
-  -g    max_gap         <int>     100             Maximum permissible gap.
-  -x    mismatches      <int>     0               Maximum permissible mismatches.
-  -o    output_file     <str>     IUPACpal.out    Output filename.
+ | FLAG | PARAMETER | TYPE | DEFAULT | DESCRIPTION |
+ | --- | --- | --- | --- | --- |
+ | -f | input_file | <str> | input.fasta | Input filename (FASTA). |
+ | -s | seq_name | <str> | seq0 | Input sequence name. |
+ | -m | min_len | <int> | 10 | Minimum length. |
+ | -M | max_len | <int> | 100 | Maximum length. |
+ | -g | max_gap | <int> | 100 | Maximum permissible gap. |
+ | -x | mismatches | <int> | 0 | Maximum permissible mismatches. |
+ | -o | output_file| <str> | IUPACpal.out | Output filename. |
 
 ### Examples
 
 Run on the input file test_data/d00596.fasta with parameters:
-default
+- default
 ```
 ./IUPACpal -f test_data/d00596.fasta
 ```
 
 Run on the input file test_data/test2.fasta with parameters:
 sequence name in fasta file: seq2
-Maximum permissible gap: 3
-Minimum length: 5
-all other parameters default
+- Maximum permissible gap: 3
+- Minimum length: 5
+- all other parameters default
 ```
 ./IUPACpal -f test_data/test2.fasta -s seq2 -g 3 -m 5
 ```
 
 Run on the input file ttest_data/rand1000000.fasta with parameters:
-Minimum length: 20
-Maximum length: 25
-Maximum permissible gap: 8
-Maximum permissible mismatches: 5
-Output filename: output.txt
+- Minimum length: 20
+- Maximum length: 25
+- Maximum permissible gap: 8
+- Maximum permissible mismatches: 5
+- Output filename: output.txt
 ```
 ./IUPACpal -f test_data/rand1000000.fasta -s seq0 -m 20 -M 25 -g 8 -x 5 -o output.txt
 ```
 
 ## Authors
 
-* **Steven Watts** - *Initial work* - [steven31415](https://github.com/steven31415)
+* **Steven Watts** - [steven31415](https://github.com/steven31415)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License.
