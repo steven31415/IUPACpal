@@ -144,4 +144,4 @@ Test results are written to an output file `test_results_<CURRENT_DATE_AND_TIME>
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the GNU GPL License.
