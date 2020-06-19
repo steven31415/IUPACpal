@@ -50,9 +50,9 @@ The IUPACpal software may then be compiled:
 $ make -f Makefile.gcc
 ```
 
-This will compile the program for 64-bit integers using the recommended type of Range Minimum Queries (`rmq1`). This requires double the amount of memory as 32-bit integers.
+This will compile the program for 64-bit integers using the recommended type of Range Minimum Queries (**rmq1**). This requires double the amount of memory as 32-bit integers.
 
-There are alternative makefiles available in the `Makefiles` folder, which provide an alternative implementation of Range Minimum Queries (`rmq2`) and a choice between 32-bit and 64-bit integers .
+There are alternative makefiles available in the `Makefiles` folder, which provide an alternative implementation of Range Minimum Queries (**rmq2**) and a choice between 32-bit and 64-bit integers .
 
 ## Running IUPACpal
 
@@ -117,17 +117,19 @@ To run the default series of test on IUPACpal, first create the `timing_tests.cf
 python tools/timing_tests_builder.py
 ```
 
-This creates the default `timing_tests.cfg`. Testing of IUPACpal can the be performed by running:
+This creates the default configruation file `timing_tests.cfg`. Testing of IUPACpal can then be performed by running:
 
 ```
 ./timing_tests.sh
 ```
 
-Ensure `timing_tests.sh` and `timing_tests.cfg` are in the same directory. To modify the test parameters, you can either directly modify `timing_tests.cfg` or alternatively modify the Python script `tools/timing_tests_builder.py` to enable the script to build a different set of tests over the desired range of parameters.
+Ensure `timing_tests.sh` and `timing_tests.cfg` are in the same directory. To modify the test parameters, you can either directly modify `timing_tests.cfg` or alternatively modify the Python script `tools/timing_tests_builder.py` to enable the script to build a different set of tests over the desired range of input parameters.
+
+Test results are written to an output file `test_results_<CURRENT_DATE_AND_TIME>.csv`
 
 ## Author
 
-`Steven Watts` - [steven31415](https://github.com/steven31415)
+**Steven Watts** - [steven31415](https://github.com/steven31415)
 
 ## License
 
