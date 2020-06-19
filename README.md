@@ -6,19 +6,19 @@ IUPACpal is an exact tool for efficient identification of inverted repeats in IU
 
 ## Project Structure
 
-| File/Folder | Purpose |
+| FILE/FOLDER | PURPOSE |
 | :--- | :--- |
-| **sdsl-lite** | Succinct Data Structure Library (unzipped)
-| **test_data** | Test data that may be used as input for IUPACpal
-| **test_results** | TODOTOESF
-| **tools** | GPOSFPOKSF
+| **sdsl-lite** | Succinct Data Structure Library (unzipped folder)
+| **test_data** | Folder containing test data that may be used as input for IUPACpal
+| **test_results** | Folder containing results from test runs
+| **tools** | Folder containg various Python tools for testing purposes
 | **Makefile.gcc** | Makefile for compiling the project
 | **README.md** | This file
 | **main.cc** | IUPACpal main code
 | **main.h** | IUPACpal header code
 | **pre-install.sh** | Pre-installation script
-| **sdsl-lite.tar.gz** | Succinct Data Structure Library (zipped)
-| **timing_tests.sh** | sdfdsfsdf
+| **sdsl-lite.tar.gz** | Succinct Data Structure Library (zipped folder)
+| **timing_tests.sh** | Execute timing tests (requires timing_tests.cfg)
 
 ## Getting Started
 
@@ -69,7 +69,7 @@ To see the full list of required inputs, run the command with no arguments:
 $ ./IUPACpal
 ```
 
-## Input Parameters
+### Input Parameters
 
 | FLAG | PARAMETER | TYPE | DEFAULT | DESCRIPTION |
 | :--- | :--- | :--- | :--- | :--- |
@@ -106,6 +106,24 @@ Run on the input file **test_data/rand1000000.fasta** with parameters:
 ```
 ./IUPACpal -f test_data/rand1000000.fasta -s seq0 -m 20 -M 25 -g 8 -x 5 -o output.txt
 ```
+
+## Testing
+
+Automated testing can be performed through the use of **timing_tests.sh** and a configuration file **timing_tests.cfg**.
+
+To run the default series of test on IUPACpal, first create the **timing_tests.cfg** file by running:
+
+```
+python tools/timing_tests_builder.py
+```
+
+This creates the default **timing_tests.cfg**. Testing of IUPACpal can the be performed by running:
+
+```
+./timing_tests.sh
+```
+
+Ensure **timing_tests.sh** and **timing_tests.cfg** are in the same directory. To modify the test parameters, you can either directly modify **timing_tests.cfg** or alternatively modify the Python script **tools/timing_tests_builder.py** to enable the script to build a different set of tests over the desired range of parameters.
 
 ## Authors
 
