@@ -88,10 +88,14 @@ $ ./IUPACpal
 
 ### Examples
 
+#### Example 1
+
 Run on the input file `test_data/d00596.fasta` with default parameters:
 ```
 $ ./IUPACpal -f test_data/d00596.fasta
 ```
+
+#### Example 2
 
 Run on the input file `test_data/test2.fasta` with parameters:
 - sequence name in fasta file: seq2
@@ -101,6 +105,8 @@ Run on the input file `test_data/test2.fasta` with parameters:
 ```
 $ ./IUPACpal -f test_data/test2.fasta -s seq2 -g 3 -m 5
 ```
+
+#### Example 3
 
 Run on the input file `test_data/rand1000000.fasta` with parameters:
 - Minimum length: 20
