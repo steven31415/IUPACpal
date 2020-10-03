@@ -118,6 +118,20 @@ Run on the input file `test_data/rand1000000.fasta` with parameters:
 $ ./IUPACpal -f test_data/rand1000000.fasta -s seq0 -m 20 -M 25 -g 8 -x 5 -o output.txt
 ```
 
+## Running IUPACpal with Python
+
+`IUPACpal.py` is a Python module that may be imported as part of a Python script via:
+
+```
+import IUPACpal
+```
+This module is a Python wrapper that requires the 'IUPACpal' software to have been compiled via 'cmake' to function.
+The module contains a function 'find_inverted_repeats' that may be used to run the IUPACpal software and returns a list of tuple pairs, representing the identified inverted repeats. An example of this Python wrapper being used can be tested by running:
+
+```
+python example.py
+```
+
 ## Testing
 
 Automated testing can be performed through the use of `timing_tests.sh` and a configuration file `timing_tests.cfg`.
