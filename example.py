@@ -17,7 +17,7 @@ inverted_repeats = find_inverted_repeats(
 
 # PRINT FOUND INVERTED REPEATS / ERROR MESSAGE
 if isinstance(inverted_repeats , str):
-	print inverted_repeats
+	print(inverted_repeats)
 else:
 	print("FORMAT: (left_strand_start, left_strand_end), (right_strand_start, right_strand_end)")
 	print("FOUND INVERTED REPEATS:")
