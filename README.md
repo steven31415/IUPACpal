@@ -125,12 +125,13 @@ $ ./IUPACpal -f test_data/rand1000000.fasta -s seq0 -m 20 -M 25 -g 8 -x 5 -o out
 ```
 import IUPACpal
 ```
-This module is a Python wrapper that requires the 'IUPACpal' software to have been compiled via 'cmake' to function.
-The module contains a function 'find_inverted_repeats' that may be used to run the IUPACpal software and returns a list of tuple pairs, representing the identified inverted repeats. An example of this Python wrapper being used can be tested by running:
+This module is a Python wrapper that first requires the 'IUPACpal' software to be compiled with 'cmake' as described above. The `IUPACpal.py` module contains a function `find_inverted_repeats` that may be used to run the IUPACpal software. `find_inverted_repeats` returns a list of tuple pairs, representing the identified inverted repeats. An example of this Python wrapper being used can be tested by running:
 
 ```
 python example.py
 ```
+
+When calling `find_inverted_repeats`, the function returns a list of tuples of pairs in the format `((left_strand_start, left_strand_end), (right_strand_start, right_strand_end))`. Each tuple represents an inverted repeat, specified by the 4 indexes within the original DNA string that correspond to the left and right strands.
 
 ## Testing
 
