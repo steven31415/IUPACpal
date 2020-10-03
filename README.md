@@ -133,6 +133,9 @@ python example.py
 
 When calling `find_inverted_repeats`, the function returns a list of tuples of pairs in the format `((left_strand_start, left_strand_end), (right_strand_start, right_strand_end))`. Each tuple represents an inverted repeat, specified by the 4 indexes within the original DNA string that correspond to the left and right strands.
 
+If no inverted repeats are found, `find_inverted_repeats` returns `None`.
+If invalid parameters are given, `find_inverted_repeats` returns an error string.
+
 ## Testing
 
 Automated testing can be performed through the use of `timing_tests.sh` and a configuration file `timing_tests.cfg`.
