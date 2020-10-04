@@ -47,7 +47,7 @@ def find_inverted_repeats(	input_file='input.fasta',
 
 	inverted_repeats = []
 
-	valid_run = not 'Error' in out
+	valid_run = (not 'Error' in str(out))
 
 	if valid_run:
 		with open(output_file) as f_in:
@@ -64,4 +64,4 @@ def find_inverted_repeats(	input_file='input.fasta',
 
 		return inverted_repeats
 	else:
-		return out
+		return str(out)
