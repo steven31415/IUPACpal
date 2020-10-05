@@ -64,4 +64,4 @@ def find_inverted_repeats(	input_file='input.fasta',
 
 		return inverted_repeats
 	else:
-		return str(out)
+		return str(out.decode('utf-8'))
